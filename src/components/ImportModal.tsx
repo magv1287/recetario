@@ -86,11 +86,14 @@ export function ImportModal({ onClose, onSave }: ImportModalProps) {
         body: JSON.stringify({ url: url.trim() }),
       });
 
-      if (!res.ok) throw new Error("Error al procesar la URL");
-
       const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Error al procesar la URL");
+      }
+
       const recipes: ExtractedRecipe[] = data.recipes || [];
-      if (recipes.length === 0) throw new Error("No se encontraron recetas");
+      if (recipes.length === 0) throw new Error("No se encontraron recetas en esta URL");
 
       setExtractedRecipes(recipes);
       setSelectedRecipes(new Set(recipes.map((_, i) => i)));
