@@ -18,7 +18,7 @@ import {
   Plus,
   ChefHat,
   Search,
-  Home,
+  X,
   Loader2,
   LogOut,
   Users,
@@ -121,6 +121,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-[#09090b] text-[#fafafa]">
       {/* ============ HEADER ============ */}
       <header className="sticky top-0 z-50 bg-[#09090b]/90 backdrop-blur-md border-b border-zinc-800/50 safe-top">
+        {/* Top row: logo + actions */}
         <div className="max-w-7xl mx-auto px-5 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <ChefHat className="text-amber-500" size={28} />
@@ -134,7 +135,7 @@ export default function HomePage() {
             <SearchBar value={searchQuery} onChange={setSearchQuery} />
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {/* Desktop: Add recipe button */}
             <button
               onClick={() => setShowImport(true)}
@@ -144,10 +145,20 @@ export default function HomePage() {
               Nueva receta
             </button>
 
+            {/* Mobile: search toggle */}
+            <button
+              onClick={() => setShowSearch(!showSearch)}
+              className={`lg:hidden p-2.5 rounded-xl transition-colors ${
+                showSearch ? "text-amber-500 bg-amber-500/10" : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"
+              }`}
+            >
+              {showSearch ? <X size={20} /> : <Search size={20} />}
+            </button>
+
             {userIsAdmin && (
               <button
                 onClick={() => setShowAccessManager(true)}
-                className="text-zinc-500 hover:text-zinc-300 p-2 rounded-xl hover:bg-zinc-800/50 transition-colors"
+                className="text-zinc-500 hover:text-zinc-300 p-2.5 rounded-xl hover:bg-zinc-800/50 transition-colors"
                 title="Gestionar acceso"
               >
                 <Users size={20} />
@@ -158,18 +169,25 @@ export default function HomePage() {
               <img
                 src={user.photoURL}
                 alt=""
-                className="w-10 h-10 rounded-full border-2 border-zinc-800"
+                className="w-10 h-10 rounded-full border-2 border-zinc-800 hidden sm:block"
               />
             )}
             <button
               onClick={signOut}
-              className="text-zinc-500 hover:text-zinc-300 p-2 rounded-xl hover:bg-zinc-800/50 transition-colors"
+              className="text-zinc-500 hover:text-zinc-300 p-2.5 rounded-xl hover:bg-zinc-800/50 transition-colors"
               title="Cerrar sesion"
             >
               <LogOut size={20} />
             </button>
           </div>
         </div>
+
+        {/* Mobile: search bar (slides down from header) */}
+        {showSearch && (
+          <div className="lg:hidden px-5 pb-4 animate-fadeIn">
+            <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          </div>
+        )}
       </header>
 
       {/* ============ DESKTOP LAYOUT: sidebar + content ============ */}
@@ -283,14 +301,7 @@ export default function HomePage() {
         </aside>
 
         {/* ============ MAIN CONTENT ============ */}
-        <div className="flex-1 min-w-0 px-5 lg:px-0 pt-5 lg:pt-0 pb-28 lg:pb-10">
-          {/* Mobile: search bar (toggled) */}
-          {showSearch && (
-            <div className="lg:hidden animate-fadeIn mb-5">
-              <SearchBar value={searchQuery} onChange={setSearchQuery} />
-            </div>
-          )}
-
+        <div className="flex-1 min-w-0 px-5 lg:px-0 pt-5 lg:pt-0 pb-32 lg:pb-10">
           {/* Mobile: horizontal filters */}
           <div className="lg:hidden space-y-4 mb-6">
             <CategoryFilter active={activeCategory} onChange={setActiveCategory} />
@@ -365,43 +376,14 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ============ MOBILE BOTTOM NAV (hidden on desktop) ============ */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#09090b]/95 backdrop-blur-md border-t border-zinc-800/50 safe-bottom lg:hidden">
-        <div className="max-w-2xl mx-auto flex items-center justify-around py-3 px-4">
-          <button
-            onClick={() => {
-              setShowSearch(false);
-              setSearchQuery("");
-            }}
-            className={`flex flex-col items-center gap-1 py-2 px-6 rounded-2xl transition-colors ${
-              !showSearch ? "text-amber-500" : "text-zinc-600"
-            }`}
-          >
-            <Home size={24} />
-            <span className="text-xs font-semibold">Inicio</span>
-          </button>
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            className={`flex flex-col items-center gap-1 py-2 px-6 rounded-2xl transition-colors ${
-              showSearch ? "text-amber-500" : "text-zinc-600"
-            }`}
-          >
-            <Search size={24} />
-            <span className="text-xs font-semibold">Buscar</span>
-          </button>
-          <button
-            onClick={() => setShowImport(true)}
-            className="flex flex-col items-center gap-1 py-1 px-6"
-          >
-            <div className="bg-amber-500 p-3 rounded-2xl -mt-6 shadow-lg shadow-amber-500/30">
-              <Plus size={24} className="text-black" />
-            </div>
-            <span className="text-xs font-semibold text-amber-500">
-              Agregar
-            </span>
-          </button>
-        </div>
-      </nav>
+      {/* ============ MOBILE FAB - Add recipe (hidden on desktop) ============ */}
+      <button
+        onClick={() => setShowImport(true)}
+        className="fixed right-5 bottom-8 z-50 bg-amber-500 hover:bg-amber-600 active:scale-95 text-black p-4 rounded-2xl shadow-xl shadow-amber-500/30 transition-all lg:hidden safe-bottom-fab"
+        aria-label="Agregar receta"
+      >
+        <Plus size={28} strokeWidth={2.5} />
+      </button>
 
       {/* Import modal */}
       {showImport && (

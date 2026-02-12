@@ -106,6 +106,10 @@ body {
   .safe-top {
     padding-top: env(safe-area-inset-top);
   }
+  /* FAB: push up by safe area so it clears the home indicator */
+  .safe-bottom-fab {
+    bottom: calc(2rem + env(safe-area-inset-bottom));
+  }
 }
 
 /* Touch targets - minimum 44px for mobile */
