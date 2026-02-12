@@ -188,7 +188,7 @@ export default function HomePage() {
               <div className="space-y-1">
                 <button
                   onClick={() => setActiveCategory("Todas")}
-                  className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-colors ${
+                  className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm focus:outline-none transition-colors ${
                     activeCategory === "Todas"
                       ? "bg-amber-500/10 text-amber-500 font-medium"
                       : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300"
@@ -200,7 +200,7 @@ export default function HomePage() {
                   <button
                     key={cat.name}
                     onClick={() => setActiveCategory(cat.name)}
-                    className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-colors ${
+                    className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm focus:outline-none transition-colors ${
                       activeCategory === cat.name
                         ? "bg-amber-500/10 text-amber-500 font-medium"
                         : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300"
@@ -230,12 +230,18 @@ export default function HomePage() {
                           setActiveDiets([...activeDiets, diet.name]);
                         }
                       }}
-                      className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-colors ${
+                      className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm focus:outline-none transition-colors ${
                         isActive
-                          ? diet.color
+                          ? "bg-amber-500/10 text-amber-500 font-medium"
                           : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300"
                       }`}
                     >
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${
+                        diet.name === "Keto" ? "bg-purple-400" :
+                        diet.name === "Low Carb" ? "bg-green-400" :
+                        diet.name === "Carnivora" ? "bg-red-400" :
+                        "bg-blue-400"
+                      }`} />
                       {diet.name}
                     </button>
                   );

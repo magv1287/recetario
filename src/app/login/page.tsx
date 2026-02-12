@@ -167,19 +167,20 @@ export default function LoginPage() {
 
           {/* Email Form */}
           <form onSubmit={handleEmailAuth} className="space-y-4">
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
+            <div className="relative flex items-center">
+              <Mail className="absolute left-4 text-zinc-500 pointer-events-none" size={16} />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 required
-                className="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3.5 pl-11 pr-4 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/25 transition-colors"
+                style={{ paddingLeft: "2.75rem" }}
+                className="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3.5 pr-4 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/25 transition-colors"
               />
             </div>
-            <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
+            <div className="relative flex items-center">
+              <Lock className="absolute left-4 text-zinc-500 pointer-events-none" size={16} />
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
@@ -187,14 +188,15 @@ export default function LoginPage() {
                 placeholder="Contraseña"
                 required
                 minLength={6}
-                className="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3.5 pl-11 pr-11 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/25 transition-colors"
+                style={{ paddingLeft: "2.75rem", paddingRight: "2.75rem" }}
+                className="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3.5 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/25 transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute right-4 text-zinc-500"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
 
