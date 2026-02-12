@@ -13,9 +13,9 @@ import {
   doc,
   serverTimestamp,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { Recipe, RecipeFormData } from "@/lib/types";
+import { compressImage } from "@/lib/image-utils";
 
 export function useRecipes(userId: string | undefined) {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -53,20 +53,18 @@ export function useRecipes(userId: string | undefined) {
     return () => unsubscribe();
   }, [userId]);
 
-  const uploadImage = async (file: File, path: string): Promise<string> => {
-    const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, file);
-    return getDownloadURL(storageRef);
-  };
-
   const addRecipe = async (data: RecipeFormData) => {
     if (!userId) throw new Error("Not authenticated");
 
     let imageUrl = data.imageUrl || "";
 
+    // Compress and convert image to base64 if a file is provided
     if (data.imageFile) {
-      const fileName = `recipes/${userId}/${Date.now()}_${data.imageFile.name}`;
-      imageUrl = await uploadImage(data.imageFile, fileName);
+      try {
+        imageUrl = await compressImage(data.imageFile);
+      } catch (err) {
+        console.error("Error compressing image:", err);
+      }
     }
 
     const recipeData = {
@@ -94,9 +92,13 @@ export function useRecipes(userId: string | undefined) {
 
     const updateData: any = { ...data };
 
+    // Compress and convert image to base64 if a new file is provided
     if (data.imageFile) {
-      const fileName = `recipes/${userId}/${Date.now()}_${data.imageFile.name}`;
-      updateData.imageUrl = await uploadImage(data.imageFile, fileName);
+      try {
+        updateData.imageUrl = await compressImage(data.imageFile);
+      } catch (err) {
+        console.error("Error compressing image:", err);
+      }
     }
 
     delete updateData.imageFile;

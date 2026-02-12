@@ -8,8 +8,8 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+import { compressImage } from "@/lib/image-utils";
 import { useAuthContext } from "@/components/AuthProvider";
 import { Recipe, Category, Diet } from "@/lib/types";
 import { getCategoryEmoji, getDietStyle, CATEGORIES, DIETS } from "@/lib/categories";
@@ -88,10 +88,11 @@ export default function RecipeDetailPage({
       let imageUrl = recipe.imageUrl;
 
       if (editImageFile) {
-        const fileName = `recipes/${user.uid}/${Date.now()}_${editImageFile.name}`;
-        const storageRef = ref(storage, fileName);
-        await uploadBytes(storageRef, editImageFile);
-        imageUrl = await getDownloadURL(storageRef);
+        try {
+          imageUrl = await compressImage(editImageFile);
+        } catch (err) {
+          console.error("Error compressing image:", err);
+        }
       }
 
       const updates = {

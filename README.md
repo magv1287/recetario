@@ -5,7 +5,7 @@ App web de recetas con extraccion automatica desde URLs, screenshots de Instagra
 ## Stack
 
 - **Next.js 15** + React 19 + TypeScript
-- **Firebase** (Auth + Firestore + Storage)
+- **Firebase** (Auth + Firestore)
 - **Google Gemini AI** (extraccion de recetas)
 - **Tailwind CSS 4** (dark theme)
 - **Vercel** (hosting gratuito)
@@ -54,22 +54,7 @@ service cloud.firestore {
    - Campo 1: `userId` (Ascending)
    - Campo 2: `createdAt` (Descending)
 
-#### c) Firebase Storage
-1. Ve a **Storage**
-2. Si no existe, habilita Storage
-3. Ve a **Rules** y pega estas reglas:
-
-```
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /recipes/{userId}/{allPaths=**} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
-```
+**Nota:** Firebase Storage NO es necesario. Las imagenes se comprimen y guardan directamente en Firestore como base64 (sin costo adicional, sin plan Blaze).
 
 ### 3. Configurar Gemini API Key
 
