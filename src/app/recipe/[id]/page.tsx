@@ -11,6 +11,7 @@ import {
 import { db } from "@/lib/firebase";
 import { compressImage } from "@/lib/image-utils";
 import { useAuthContext } from "@/components/AuthProvider";
+import { useFavorites } from "@/hooks/useFavorites";
 import { Recipe, Category, Diet } from "@/lib/types";
 import { getCategoryEmoji, getDietStyle, CATEGORIES, DIETS } from "@/lib/categories";
 import { DeleteConfirm } from "@/components/DeleteConfirm";
@@ -22,6 +23,7 @@ import {
   Loader2,
   Check,
   X,
+  Heart,
   Image as ImageIcon,
   ChefHat,
 } from "lucide-react";
@@ -34,6 +36,7 @@ export default function RecipeDetailPage({
   const { id } = use(params);
   const { user } = useAuthContext();
   const router = useRouter();
+  const { toggleFavorite, isFavorite } = useFavorites(user?.uid);
 
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
@@ -157,6 +160,7 @@ export default function RecipeDetailPage({
   }
 
   const currentImage = editing ? editImagePreview : recipe.imageUrl;
+  const recipeIsFavorite = isFavorite(recipe.id);
 
   return (
     <main className="min-h-screen bg-[#09090b] text-[#fafafa] pb-16">
@@ -170,24 +174,38 @@ export default function RecipeDetailPage({
             <ArrowLeft size={20} />
             Volver al recetario
           </button>
-          {!editing && (
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setEditing(true)}
-                className="flex items-center gap-2.5 px-5 py-2.5 bg-[#18181b] border border-zinc-800 rounded-2xl text-sm font-medium text-zinc-300 hover:border-zinc-700 transition-colors"
-              >
-                <Edit3 size={16} />
-                Editar
-              </button>
-              <button
-                onClick={() => setShowDelete(true)}
-                className="flex items-center gap-2.5 px-5 py-2.5 bg-red-500/10 border border-red-500/20 rounded-2xl text-sm font-medium text-red-400 hover:bg-red-500/20 transition-colors"
-              >
-                <Trash2 size={16} />
-                Eliminar
-              </button>
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            {/* Favorite button - desktop */}
+            <button
+              onClick={() => toggleFavorite(recipe.id)}
+              className={`flex items-center gap-2.5 px-5 py-2.5 rounded-2xl text-sm font-medium border transition-all ${
+                recipeIsFavorite
+                  ? "bg-red-500/10 border-red-500/30 text-red-400"
+                  : "bg-[#18181b] border-zinc-800 text-zinc-400 hover:border-zinc-700"
+              }`}
+            >
+              <Heart size={16} className={recipeIsFavorite ? "fill-red-400" : ""} />
+              {recipeIsFavorite ? "Favorita" : "Favorito"}
+            </button>
+            {!editing && (
+              <>
+                <button
+                  onClick={() => setEditing(true)}
+                  className="flex items-center gap-2.5 px-5 py-2.5 bg-[#18181b] border border-zinc-800 rounded-2xl text-sm font-medium text-zinc-300 hover:border-zinc-700 transition-colors"
+                >
+                  <Edit3 size={16} />
+                  Editar
+                </button>
+                <button
+                  onClick={() => setShowDelete(true)}
+                  className="flex items-center gap-2.5 px-5 py-2.5 bg-red-500/10 border border-red-500/20 rounded-2xl text-sm font-medium text-red-400 hover:bg-red-500/20 transition-colors"
+                >
+                  <Trash2 size={16} />
+                  Eliminar
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -212,6 +230,16 @@ export default function RecipeDetailPage({
           <ArrowLeft size={22} />
         </button>
         <div className="absolute top-5 right-5 flex gap-3 z-10">
+          {/* Favorite button - mobile */}
+          <button
+            onClick={() => toggleFavorite(recipe.id)}
+            className="bg-black/50 backdrop-blur-sm p-3 rounded-2xl active:scale-90 transition-transform"
+          >
+            <Heart
+              size={22}
+              className={recipeIsFavorite ? "text-red-500 fill-red-500" : "text-white/80"}
+            />
+          </button>
           {editing && (
             <label className="bg-black/50 backdrop-blur-sm p-3 rounded-2xl cursor-pointer">
               <ImageIcon size={22} className="text-amber-500" />

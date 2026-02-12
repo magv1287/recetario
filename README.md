@@ -46,6 +46,10 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow update, delete: if request.auth != null;
     }
+    // User preferences (favorites): each user can only read/write their own
+    match /userPrefs/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
     // Access control config: any authenticated user can read, only admin can write
     match /config/access {
       allow read: if request.auth != null;
@@ -164,6 +168,7 @@ Vercel te dara un dominio gratis tipo `recetario-xxx.vercel.app`.
 - **Importar desde PDF**: Sube un PDF de recetas, selecciona las paginas, y la IA extrae todas las recetas
 - **Categorias**: Sopas, Carnes, Pescados, Postres, Ensaladas, Pastas, Arroces, Snacks, Desayunos, Otros
 - **Dietas**: Keto, Low Carb, Carnivora, Mediterranea
+- **Favoritos**: Marca recetas como favoritas (cada usuario tiene sus propios favoritos)
 - **Busqueda**: Busca por nombre, descripcion o ingredientes
 - **Editar/Eliminar**: Modifica cualquier receta despues de importarla
 - **Multi-usuario**: Login con Google o Email/Password
@@ -195,6 +200,7 @@ src/
   hooks/
     useAuth.ts             # Hook de autenticacion
     useRecipes.ts          # Hook CRUD de recetas
+    useFavorites.ts        # Hook de favoritos por usuario
   lib/
     firebase.ts            # Configuracion Firebase
     types.ts               # Tipos TypeScript
