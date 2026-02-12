@@ -15,22 +15,20 @@ interface RecipeCardProps {
 export function RecipeCard({ recipe, onClick, isFavorite = false, onToggleFavorite }: RecipeCardProps) {
   return (
     <div className="relative bg-[#18181b] border border-zinc-800 rounded-2xl overflow-hidden hover:border-zinc-700 transition-all group animate-fadeIn">
-      {/* Favorite button - top right of image */}
-      {onToggleFavorite && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleFavorite(recipe.id);
-          }}
-          className="absolute top-3 right-3 z-10 bg-black/50 backdrop-blur-sm p-2.5 rounded-full transition-all active:scale-90 hover:bg-black/70"
-          aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
-        >
-          <Heart
-            size={18}
-            className={isFavorite ? "text-red-500 fill-red-500" : "text-white/70"}
-          />
-        </button>
-      )}
+      {/* Favorite button - always visible, top right of image */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleFavorite?.(recipe.id);
+        }}
+        className="absolute top-3 right-3 z-10 bg-black/50 backdrop-blur-sm p-2.5 rounded-full transition-all active:scale-90 hover:bg-black/70"
+        aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+      >
+        <Heart
+          size={18}
+          className={isFavorite ? "text-red-500 fill-red-500" : "text-white/70"}
+        />
+      </button>
 
       {/* Clickable area */}
       <button

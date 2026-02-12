@@ -10,6 +10,7 @@ export type Category =
   | "Arroces"
   | "Snacks"
   | "Desayunos"
+  | "Cenas"
   | "Otros";
 
 export type Diet = "Keto" | "Low Carb" | "Carnivora" | "Mediterranea";

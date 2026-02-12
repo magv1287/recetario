@@ -10,6 +10,7 @@ export const CATEGORIES: { name: Category; emoji: string }[] = [
   { name: "Arroces", emoji: "🍚" },
   { name: "Snacks", emoji: "🥨" },
   { name: "Desayunos", emoji: "🥞" },
+  { name: "Cenas", emoji: "🌙" },
   { name: "Otros", emoji: "🍽️" },
 ];
 
