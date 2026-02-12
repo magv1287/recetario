@@ -100,9 +100,7 @@ export default function RecipeDetailPage({
         description: editDescription,
         category: editCategory,
         diets: editDiets,
-        ingredients: editIngredients
-          .split("\n")
-          .filter((s) => s.trim()),
+        ingredients: editIngredients.split("\n").filter((s) => s.trim()),
         steps: editSteps.split("\n").filter((s) => s.trim()),
         imageUrl,
       };
@@ -157,13 +155,46 @@ export default function RecipeDetailPage({
     );
   }
 
+  const currentImage = editing ? editImagePreview : recipe.imageUrl;
+
   return (
     <main className="min-h-screen bg-[#09090b] text-[#fafafa] pb-12">
-      {/* Hero image */}
-      <div className="relative w-full aspect-[16/10] max-h-[50vh] bg-zinc-900">
-        {(editing ? editImagePreview : recipe.imageUrl) ? (
+      {/* ---- Desktop: back button bar ---- */}
+      <div className="hidden lg:block sticky top-0 z-50 bg-[#09090b]/90 backdrop-blur-md border-b border-zinc-800/50">
+        <div className="max-w-6xl mx-auto px-8 py-3 flex items-center justify-between">
+          <button
+            onClick={() => router.push("/")}
+            className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200 transition-colors text-sm"
+          >
+            <ArrowLeft size={18} />
+            Volver al recetario
+          </button>
+          {!editing && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setEditing(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-[#18181b] border border-zinc-800 rounded-xl text-sm text-zinc-300 hover:border-zinc-700 transition-colors"
+              >
+                <Edit3 size={15} />
+                Editar
+              </button>
+              <button
+                onClick={() => setShowDelete(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400 hover:bg-red-500/20 transition-colors"
+              >
+                <Trash2 size={15} />
+                Eliminar
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ---- Mobile: hero image with overlay buttons ---- */}
+      <div className="lg:hidden relative w-full aspect-[16/10] max-h-[50vh] bg-zinc-900">
+        {currentImage ? (
           <img
-            src={(editing ? editImagePreview : recipe.imageUrl) || ""}
+            src={currentImage}
             alt={recipe.title}
             className="w-full h-full object-cover"
           />
@@ -172,43 +203,26 @@ export default function RecipeDetailPage({
             <ChefHat className="text-zinc-700" size={64} />
           </div>
         )}
-
-        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-[#09090b]/30" />
-
-        {/* Back button */}
         <button
           onClick={() => router.push("/")}
           className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm p-2 rounded-full z-10"
         >
           <ArrowLeft size={20} />
         </button>
-
-        {/* Action buttons */}
         <div className="absolute top-4 right-4 flex gap-2 z-10">
           {editing && (
             <label className="bg-black/50 backdrop-blur-sm p-2 rounded-full cursor-pointer">
               <ImageIcon size={20} className="text-amber-500" />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
+              <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
             </label>
           )}
           {!editing && (
             <>
-              <button
-                onClick={() => setEditing(true)}
-                className="bg-black/50 backdrop-blur-sm p-2 rounded-full"
-              >
+              <button onClick={() => setEditing(true)} className="bg-black/50 backdrop-blur-sm p-2 rounded-full">
                 <Edit3 size={20} className="text-amber-500" />
               </button>
-              <button
-                onClick={() => setShowDelete(true)}
-                className="bg-black/50 backdrop-blur-sm p-2 rounded-full"
-              >
+              <button onClick={() => setShowDelete(true)} className="bg-black/50 backdrop-blur-sm p-2 rounded-full">
                 <Trash2 size={20} className="text-red-400" />
               </button>
             </>
@@ -216,17 +230,35 @@ export default function RecipeDetailPage({
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 -mt-8 relative z-10">
+      {/* ============ CONTENT ============ */}
+      <div className="max-w-6xl mx-auto px-4 lg:px-8 -mt-8 lg:mt-0 relative z-10">
         {editing ? (
-          /* ----- EDIT MODE ----- */
-          <div className="space-y-5 animate-fadeIn">
+          /* ========== EDIT MODE ========== */
+          <div className="max-w-2xl mx-auto lg:pt-6 space-y-5 animate-fadeIn">
+            {/* Desktop: image editor */}
+            <div className="hidden lg:block">
+              <div className="relative w-full aspect-[16/7] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
+                {editImagePreview ? (
+                  <img src={editImagePreview} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-500/10 to-orange-500/10">
+                    <ChefHat className="text-zinc-700" size={64} />
+                  </div>
+                )}
+                <label className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-4 py-2 rounded-xl cursor-pointer flex items-center gap-2 text-sm text-zinc-200 hover:bg-black/80 transition-colors">
+                  <ImageIcon size={16} className="text-amber-500" />
+                  Cambiar imagen
+                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                </label>
+              </div>
+            </div>
+
             <input
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
               className="w-full text-2xl font-bold bg-transparent border-b border-zinc-800 pb-2 focus:outline-none focus:border-amber-500 text-zinc-100"
               placeholder="Título"
             />
-
             <textarea
               value={editDescription}
               onChange={(e) => setEditDescription(e.target.value)}
@@ -234,12 +266,9 @@ export default function RecipeDetailPage({
               className="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm text-zinc-300 focus:outline-none focus:border-amber-500/50 resize-none"
               placeholder="Descripción..."
             />
-
-            <div className="flex gap-3">
-              <div className="flex-1">
-                <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">
-                  Categoría
-                </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Categoría</label>
                 <select
                   value={editCategory}
                   onChange={(e) => setEditCategory(e.target.value as Category)}
@@ -252,40 +281,34 @@ export default function RecipeDetailPage({
                   ))}
                 </select>
               </div>
-            </div>
-
-            <div>
-              <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">
-                Dietas
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {DIETS.map((diet) => (
-                  <button
-                    key={diet.name}
-                    type="button"
-                    onClick={() => {
-                      setEditDiets(
+              <div>
+                <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Dietas</label>
+                <div className="flex flex-wrap gap-2">
+                  {DIETS.map((diet) => (
+                    <button
+                      key={diet.name}
+                      type="button"
+                      onClick={() => {
+                        setEditDiets(
+                          editDiets.includes(diet.name)
+                            ? editDiets.filter((d) => d !== diet.name)
+                            : [...editDiets, diet.name]
+                        );
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                         editDiets.includes(diet.name)
-                          ? editDiets.filter((d) => d !== diet.name)
-                          : [...editDiets, diet.name]
-                      );
-                    }}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                      editDiets.includes(diet.name)
-                        ? diet.color
-                        : "border-zinc-800 text-zinc-600"
-                    }`}
-                  >
-                    {diet.name}
-                  </button>
-                ))}
+                          ? diet.color
+                          : "border-zinc-800 text-zinc-600"
+                      }`}
+                    >
+                      {diet.name}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-
             <div>
-              <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">
-                Ingredientes (uno por línea)
-              </label>
+              <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Ingredientes (uno por línea)</label>
               <textarea
                 value={editIngredients}
                 onChange={(e) => setEditIngredients(e.target.value)}
@@ -293,11 +316,8 @@ export default function RecipeDetailPage({
                 className="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm text-zinc-300 focus:outline-none focus:border-amber-500/50 resize-none font-mono"
               />
             </div>
-
             <div>
-              <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">
-                Pasos (uno por línea)
-              </label>
+              <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Pasos (uno por línea)</label>
               <textarea
                 value={editSteps}
                 onChange={(e) => setEditSteps(e.target.value)}
@@ -305,114 +325,135 @@ export default function RecipeDetailPage({
                 className="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm text-zinc-300 focus:outline-none focus:border-amber-500/50 resize-none font-mono"
               />
             </div>
-
             <div className="flex gap-3">
               <button
-                onClick={() => {
-                  setEditing(false);
-                  initEditForm(recipe);
-                }}
-                className="flex-1 py-3 border border-zinc-800 rounded-xl text-zinc-400 text-sm font-medium flex items-center justify-center gap-2"
+                onClick={() => { setEditing(false); initEditForm(recipe); }}
+                className="flex-1 py-3 border border-zinc-800 rounded-xl text-zinc-400 text-sm font-medium flex items-center justify-center gap-2 hover:bg-zinc-800/50 transition-colors"
               >
-                <X size={16} />
-                Cancelar
+                <X size={16} /> Cancelar
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 py-3 bg-amber-500 rounded-xl text-black text-sm font-bold flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-amber-500 rounded-xl text-black text-sm font-bold flex items-center justify-center gap-2 hover:bg-amber-600 transition-colors"
               >
-                {saving ? (
-                  <Loader2 className="animate-spin" size={16} />
-                ) : (
-                  <Check size={16} />
-                )}
+                {saving ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} />}
                 {saving ? "Guardando..." : "Guardar"}
               </button>
             </div>
           </div>
         ) : (
-          /* ----- VIEW MODE ----- */
-          <div className="space-y-6 animate-fadeIn">
-            {/* Title and meta */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="bg-amber-500/10 text-amber-500 px-2.5 py-1 rounded-full text-xs font-medium">
-                  {getCategoryEmoji(recipe.category)} {recipe.category}
-                </span>
+          /* ========== VIEW MODE ========== */
+          <div className="lg:flex lg:gap-10 lg:pt-6 animate-fadeIn">
+
+            {/* Desktop: left column - image */}
+            <div className="hidden lg:block lg:w-2/5 shrink-0">
+              <div className="sticky top-24">
+                <div className="rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
+                  {recipe.imageUrl ? (
+                    <img
+                      src={recipe.imageUrl}
+                      alt={recipe.title}
+                      className="w-full aspect-[4/3] object-cover"
+                    />
+                  ) : (
+                    <div className="w-full aspect-[4/3] flex items-center justify-center bg-gradient-to-br from-amber-500/10 to-orange-500/10">
+                      <ChefHat className="text-zinc-700" size={64} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Source URL */}
+                {recipe.sourceUrl && (
+                  <a
+                    href={recipe.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-amber-500 text-sm hover:text-amber-400 mt-4"
+                  >
+                    <ExternalLink size={14} />
+                    Ver receta original
+                  </a>
+                )}
               </div>
-              <h1 className="text-2xl font-bold text-zinc-100">
-                {recipe.title}
-              </h1>
-              {recipe.description && (
-                <p className="text-zinc-400 text-sm mt-2">
-                  {recipe.description}
-                </p>
-              )}
             </div>
 
-            {/* Diet tags */}
-            {recipe.diets && recipe.diets.length > 0 && (
-              <div className="flex gap-2 flex-wrap">
-                {recipe.diets.map((diet) => (
-                  <span
-                    key={diet}
-                    className={`px-3 py-1 rounded-full text-xs font-medium border ${getDietStyle(diet)}`}
-                  >
-                    {diet}
+            {/* Right column (or full width on mobile) - content */}
+            <div className="flex-1 min-w-0 space-y-6">
+              {/* Title and meta */}
+              <div>
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <span className="bg-amber-500/10 text-amber-500 px-2.5 py-1 rounded-full text-xs font-medium">
+                    {getCategoryEmoji(recipe.category)} {recipe.category}
                   </span>
-                ))}
+                  {recipe.diets && recipe.diets.length > 0 &&
+                    recipe.diets.map((diet) => (
+                      <span
+                        key={diet}
+                        className={`px-2.5 py-1 rounded-full text-xs font-medium border ${getDietStyle(diet)}`}
+                      >
+                        {diet}
+                      </span>
+                    ))
+                  }
+                </div>
+                <h1 className="text-2xl lg:text-3xl font-bold text-zinc-100">
+                  {recipe.title}
+                </h1>
+                {recipe.description && (
+                  <p className="text-zinc-400 text-sm lg:text-base mt-2 leading-relaxed">
+                    {recipe.description}
+                  </p>
+                )}
               </div>
-            )}
 
-            {/* Source URL */}
-            {recipe.sourceUrl && (
-              <a
-                href={recipe.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-amber-500 text-sm hover:text-amber-400"
-              >
-                <ExternalLink size={14} />
-                Ver receta original
-              </a>
-            )}
+              {/* Mobile: source URL */}
+              {recipe.sourceUrl && (
+                <a
+                  href={recipe.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="lg:hidden inline-flex items-center gap-1.5 text-amber-500 text-sm hover:text-amber-400"
+                >
+                  <ExternalLink size={14} />
+                  Ver receta original
+                </a>
+              )}
 
-            {/* Ingredients */}
-            <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-5">
-              <h2 className="text-amber-500 text-xs font-bold uppercase tracking-wider mb-3">
-                Ingredientes ({recipe.ingredients?.length || 0})
-              </h2>
-              <ul className="space-y-2">
-                {recipe.ingredients?.map((ing, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-2 text-zinc-300 text-sm"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
-                    {ing}
-                  </li>
-                ))}
-              </ul>
-            </div>
+              {/* Ingredients & Steps - side by side on large desktop */}
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                {/* Ingredients */}
+                <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-5">
+                  <h2 className="text-amber-500 text-xs font-bold uppercase tracking-wider mb-3">
+                    Ingredientes ({recipe.ingredients?.length || 0})
+                  </h2>
+                  <ul className="space-y-2">
+                    {recipe.ingredients?.map((ing, i) => (
+                      <li key={i} className="flex items-start gap-2 text-zinc-300 text-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                        {ing}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-            {/* Steps */}
-            <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-5">
-              <h2 className="text-amber-500 text-xs font-bold uppercase tracking-wider mb-3">
-                Preparación
-              </h2>
-              <ol className="space-y-4">
-                {recipe.steps?.map((step, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span className="w-6 h-6 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                      {i + 1}
-                    </span>
-                    <p className="text-zinc-300 text-sm leading-relaxed">
-                      {step}
-                    </p>
-                  </li>
-                ))}
-              </ol>
+                {/* Steps */}
+                <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-5">
+                  <h2 className="text-amber-500 text-xs font-bold uppercase tracking-wider mb-3">
+                    Preparación
+                  </h2>
+                  <ol className="space-y-4">
+                    {recipe.steps?.map((step, i) => (
+                      <li key={i} className="flex gap-3">
+                        <span className="w-6 h-6 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                          {i + 1}
+                        </span>
+                        <p className="text-zinc-300 text-sm leading-relaxed">{step}</p>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
             </div>
           </div>
         )}
