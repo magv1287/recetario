@@ -40,19 +40,28 @@ La app ya esta conectada al proyecto Firebase `recetario-bd58f`. Necesitas confi
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Recipes: shared between all authenticated users
     match /recipes/{recipeId} {
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null;
+    }
+    // Access control config: any authenticated user can read, only admin can write
+    match /config/access {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null
+        && resource.data.adminEmail == request.auth.token.email;
     }
   }
 }
 ```
 
+**IMPORTANTE:** Debes actualizar estas reglas en Firebase Console para que el control de acceso y las recetas compartidas funcionen correctamente. Las recetas son compartidas entre todos los usuarios autorizados.
+
 4. Ve a **Indexes** y crea un indice compuesto:
    - Coleccion: `recipes`
-   - Campo 1: `userId` (Ascending)
-   - Campo 2: `createdAt` (Descending)
+   - Campo 1: `createdAt` (Descending)
 
 **Nota:** Firebase Storage NO es necesario. Las imagenes se comprimen y guardan directamente en Firestore como base64 (sin costo adicional, sin plan Blaze).
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/components/AuthProvider";
 import { useRecipes } from "@/hooks/useRecipes";
@@ -9,6 +9,8 @@ import { DietFilter } from "@/components/DietFilter";
 import { SearchBar } from "@/components/SearchBar";
 import { RecipeCard } from "@/components/RecipeCard";
 import { ImportModal } from "@/components/ImportModal";
+import { AccessManager } from "@/components/AccessManager";
+import { isAdmin } from "@/lib/access-control";
 import { Category, Diet, ExtractedRecipe } from "@/lib/types";
 import { CATEGORIES, DIETS } from "@/lib/categories";
 import { getCategoryEmoji } from "@/lib/categories";
@@ -19,6 +21,7 @@ import {
   Home,
   Loader2,
   LogOut,
+  Users,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -31,6 +34,15 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showImport, setShowImport] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showAccessManager, setShowAccessManager] = useState(false);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+
+  // Check if user is admin
+  useEffect(() => {
+    if (user?.email) {
+      isAdmin(user.email).then(setUserIsAdmin);
+    }
+  }, [user?.email]);
 
   // Redirect to login if not authenticated
   React.useEffect(() => {
@@ -108,113 +120,132 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#09090b] text-[#fafafa]">
       {/* ============ HEADER ============ */}
-      <header className="sticky top-0 z-50 bg-[#09090b]/90 backdrop-blur-md border-b border-zinc-800/50">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <ChefHat className="text-amber-500" size={24} />
-            <h1 className="text-xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+      <header className="sticky top-0 z-50 bg-[#09090b]/90 backdrop-blur-md border-b border-zinc-800/50 safe-top">
+        <div className="max-w-7xl mx-auto px-5 lg:px-8 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <ChefHat className="text-amber-500" size={28} />
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
               Recetario
             </h1>
           </div>
 
-          {/* Desktop: search + add button in header */}
-          <div className="hidden lg:flex items-center gap-4 flex-1 max-w-xl mx-8">
+          {/* Desktop: search in header */}
+          <div className="hidden lg:flex items-center gap-6 flex-1 max-w-2xl mx-10">
             <SearchBar value={searchQuery} onChange={setSearchQuery} />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {/* Desktop: Add recipe button */}
             <button
               onClick={() => setShowImport(true)}
-              className="hidden lg:flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-black font-bold px-5 py-2 rounded-xl text-sm transition-colors"
+              className="hidden lg:flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-black font-bold px-6 py-3 rounded-2xl text-sm transition-colors shadow-lg shadow-amber-500/10"
             >
               <Plus size={18} />
               Nueva receta
             </button>
 
+            {userIsAdmin && (
+              <button
+                onClick={() => setShowAccessManager(true)}
+                className="text-zinc-500 hover:text-zinc-300 p-2 rounded-xl hover:bg-zinc-800/50 transition-colors"
+                title="Gestionar acceso"
+              >
+                <Users size={20} />
+              </button>
+            )}
+
             {user?.photoURL && (
               <img
                 src={user.photoURL}
                 alt=""
-                className="w-8 h-8 rounded-full border border-zinc-800"
+                className="w-10 h-10 rounded-full border-2 border-zinc-800"
               />
             )}
             <button
               onClick={signOut}
-              className="text-zinc-500 hover:text-zinc-300 p-1.5"
-              title="Cerrar sesión"
+              className="text-zinc-500 hover:text-zinc-300 p-2 rounded-xl hover:bg-zinc-800/50 transition-colors"
+              title="Cerrar sesion"
             >
-              <LogOut size={18} />
+              <LogOut size={20} />
             </button>
           </div>
         </div>
       </header>
 
       {/* ============ DESKTOP LAYOUT: sidebar + content ============ */}
-      <div className="max-w-7xl mx-auto lg:px-8 lg:flex lg:gap-8 lg:pt-6">
+      <div className="max-w-7xl mx-auto lg:px-8 lg:flex lg:gap-10 lg:pt-8">
 
         {/* ---- Desktop Sidebar ---- */}
-        <aside className="hidden lg:block w-64 shrink-0">
-          <div className="sticky top-20 space-y-6">
+        <aside className="hidden lg:block w-72 shrink-0">
+          <div className="sticky top-24 space-y-6">
             {/* User info */}
-            <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-4">
-              <div className="flex items-center gap-3">
+            <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-5">
+              <div className="flex items-center gap-4">
                 {user?.photoURL ? (
-                  <img src={user.photoURL} alt="" className="w-10 h-10 rounded-full" />
+                  <img src={user.photoURL} alt="" className="w-12 h-12 rounded-full" />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-                    <ChefHat className="text-amber-500" size={20} />
+                  <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center">
+                    <ChefHat className="text-amber-500" size={24} />
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-zinc-200 truncate">
+                  <p className="text-base font-semibold text-zinc-200 truncate">
                     {user?.displayName || "Chef"}
                   </p>
-                  <p className="text-xs text-zinc-500 truncate">{user?.email}</p>
+                  <p className="text-sm text-zinc-500 truncate">{user?.email}</p>
                 </div>
               </div>
-              <div className="mt-3 pt-3 border-t border-zinc-800">
-                <p className="text-xs text-zinc-500">
+              <div className="mt-4 pt-4 border-t border-zinc-800 flex items-center justify-between">
+                <p className="text-sm text-zinc-500">
                   {recipes.length} {recipes.length === 1 ? "receta" : "recetas"} guardadas
                 </p>
+                {userIsAdmin && (
+                  <button
+                    onClick={() => setShowAccessManager(true)}
+                    className="text-zinc-500 hover:text-amber-500 p-1.5 rounded-lg hover:bg-zinc-800 transition-colors"
+                    title="Gestionar acceso"
+                  >
+                    <Users size={16} />
+                  </button>
+                )}
               </div>
             </div>
 
             {/* Categories - desktop sidebar */}
-            <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-4">
-              <h3 className="text-xs text-zinc-500 uppercase tracking-wider font-medium mb-3">
-                Categorías
+            <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-5">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-4">
+                Categorias
               </h3>
               <div className="space-y-1">
                 <button
                   onClick={() => setActiveCategory("Todas")}
-                  className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm focus:outline-none transition-colors ${
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-colors ${
                     activeCategory === "Todas"
-                      ? "bg-amber-500/10 text-amber-500 font-medium"
+                      ? "bg-amber-500/10 text-amber-500 font-semibold"
                       : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300"
                   }`}
                 >
-                  <span>📖</span> Todas
+                  <span className="text-lg">📖</span> Todas
                 </button>
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat.name}
                     onClick={() => setActiveCategory(cat.name)}
-                    className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm focus:outline-none transition-colors ${
+                    className={`w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-colors ${
                       activeCategory === cat.name
-                        ? "bg-amber-500/10 text-amber-500 font-medium"
+                        ? "bg-amber-500/10 text-amber-500 font-semibold"
                         : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300"
                     }`}
                   >
-                    <span>{cat.emoji}</span> {cat.name}
+                    <span className="text-lg">{cat.emoji}</span> {cat.name}
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Diets - desktop sidebar */}
-            <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-4">
-              <h3 className="text-xs text-zinc-500 uppercase tracking-wider font-medium mb-3">
+            <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-5">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-4">
                 Dietas
               </h3>
               <div className="space-y-1">
@@ -230,13 +261,13 @@ export default function HomePage() {
                           setActiveDiets([...activeDiets, diet.name]);
                         }
                       }}
-                      className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm focus:outline-none transition-colors ${
+                      className={`w-full text-left flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-colors ${
                         isActive
-                          ? "bg-amber-500/10 text-amber-500 font-medium"
+                          ? "bg-amber-500/10 text-amber-500 font-semibold"
                           : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300"
                       }`}
                     >
-                      <span className={`w-2 h-2 rounded-full shrink-0 ${
+                      <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
                         diet.name === "Keto" ? "bg-purple-400" :
                         diet.name === "Low Carb" ? "bg-green-400" :
                         diet.name === "Carnivora" ? "bg-red-400" :
@@ -252,27 +283,27 @@ export default function HomePage() {
         </aside>
 
         {/* ============ MAIN CONTENT ============ */}
-        <div className="flex-1 min-w-0 px-4 lg:px-0 pt-4 lg:pt-0 pb-24 lg:pb-8">
+        <div className="flex-1 min-w-0 px-5 lg:px-0 pt-5 lg:pt-0 pb-28 lg:pb-10">
           {/* Mobile: search bar (toggled) */}
           {showSearch && (
-            <div className="lg:hidden animate-fadeIn mb-4">
+            <div className="lg:hidden animate-fadeIn mb-5">
               <SearchBar value={searchQuery} onChange={setSearchQuery} />
             </div>
           )}
 
           {/* Mobile: horizontal filters */}
-          <div className="lg:hidden space-y-3 mb-4">
+          <div className="lg:hidden space-y-4 mb-6">
             <CategoryFilter active={activeCategory} onChange={setActiveCategory} />
             <DietFilter active={activeDiets} onChange={setActiveDiets} />
           </div>
 
           {/* Recipe count + clear filters */}
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-xs text-zinc-600 uppercase tracking-wider">
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-sm text-zinc-500 font-medium">
               {filteredRecipes.length}{" "}
               {filteredRecipes.length === 1 ? "receta" : "recetas"}
               {activeCategory !== "Todas" && (
-                <span className="text-zinc-500 normal-case ml-1">
+                <span className="text-zinc-400 ml-1.5">
                   en {getCategoryEmoji(activeCategory)} {activeCategory}
                 </span>
               )}
@@ -280,7 +311,7 @@ export default function HomePage() {
             {hasFilters && (
               <button
                 onClick={clearFilters}
-                className="text-xs text-amber-500 hover:text-amber-400"
+                className="text-sm text-amber-500 hover:text-amber-400 font-medium"
               >
                 Limpiar filtros
               </button>
@@ -289,39 +320,39 @@ export default function HomePage() {
 
           {/* Recipe grid */}
           {recipesLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="animate-spin text-amber-500" size={32} />
+            <div className="flex items-center justify-center py-24">
+              <Loader2 className="animate-spin text-amber-500" size={36} />
             </div>
           ) : filteredRecipes.length === 0 ? (
-            <div className="text-center py-20 border-2 border-dashed border-zinc-800 rounded-2xl">
+            <div className="text-center py-24 border-2 border-dashed border-zinc-800 rounded-3xl">
               {recipes.length === 0 ? (
                 <>
-                  <ChefHat className="text-zinc-700 mx-auto mb-4" size={48} />
-                  <p className="text-zinc-500 text-sm mb-2">
-                    No hay recetas aún
+                  <ChefHat className="text-zinc-700 mx-auto mb-5" size={56} />
+                  <p className="text-zinc-400 text-lg mb-2 font-medium">
+                    No hay recetas aun
                   </p>
-                  <p className="text-zinc-600 text-xs mb-6">
+                  <p className="text-zinc-600 text-sm mb-8 max-w-xs mx-auto">
                     Agrega tu primera receta desde una URL, foto o PDF
                   </p>
                   <button
                     onClick={() => setShowImport(true)}
-                    className="inline-flex items-center gap-2 bg-amber-500 text-black font-bold px-6 py-2.5 rounded-full text-sm"
+                    className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-black font-bold px-8 py-3.5 rounded-2xl text-sm shadow-lg shadow-amber-500/20 transition-colors"
                   >
-                    <Plus size={16} />
+                    <Plus size={18} />
                     Agregar receta
                   </button>
                 </>
               ) : (
                 <>
-                  <Search className="text-zinc-700 mx-auto mb-4" size={48} />
-                  <p className="text-zinc-500 text-sm">
+                  <Search className="text-zinc-700 mx-auto mb-5" size={56} />
+                  <p className="text-zinc-400 text-lg font-medium">
                     No se encontraron recetas con estos filtros
                   </p>
                 </>
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-6">
               {filteredRecipes.map((recipe) => (
                 <RecipeCard
                   key={recipe.id}
@@ -335,37 +366,37 @@ export default function HomePage() {
       </div>
 
       {/* ============ MOBILE BOTTOM NAV (hidden on desktop) ============ */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#09090b]/90 backdrop-blur-md border-t border-zinc-800/50 safe-bottom lg:hidden">
-        <div className="max-w-2xl mx-auto flex items-center justify-around py-2">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#09090b]/95 backdrop-blur-md border-t border-zinc-800/50 safe-bottom lg:hidden">
+        <div className="max-w-2xl mx-auto flex items-center justify-around py-3 px-4">
           <button
             onClick={() => {
               setShowSearch(false);
               setSearchQuery("");
             }}
-            className={`flex flex-col items-center gap-0.5 py-1 px-4 ${
+            className={`flex flex-col items-center gap-1 py-2 px-6 rounded-2xl transition-colors ${
               !showSearch ? "text-amber-500" : "text-zinc-600"
             }`}
           >
-            <Home size={20} />
-            <span className="text-[10px] font-medium">Inicio</span>
+            <Home size={24} />
+            <span className="text-xs font-semibold">Inicio</span>
           </button>
           <button
             onClick={() => setShowSearch(!showSearch)}
-            className={`flex flex-col items-center gap-0.5 py-1 px-4 ${
+            className={`flex flex-col items-center gap-1 py-2 px-6 rounded-2xl transition-colors ${
               showSearch ? "text-amber-500" : "text-zinc-600"
             }`}
           >
-            <Search size={20} />
-            <span className="text-[10px] font-medium">Buscar</span>
+            <Search size={24} />
+            <span className="text-xs font-semibold">Buscar</span>
           </button>
           <button
             onClick={() => setShowImport(true)}
-            className="flex flex-col items-center gap-0.5 py-1 px-4"
+            className="flex flex-col items-center gap-1 py-1 px-6"
           >
-            <div className="bg-amber-500 p-2 rounded-full -mt-5 shadow-lg shadow-amber-500/20">
-              <Plus size={22} className="text-black" />
+            <div className="bg-amber-500 p-3 rounded-2xl -mt-6 shadow-lg shadow-amber-500/30">
+              <Plus size={24} className="text-black" />
             </div>
-            <span className="text-[10px] font-medium text-amber-500">
+            <span className="text-xs font-semibold text-amber-500">
               Agregar
             </span>
           </button>
@@ -377,6 +408,14 @@ export default function HomePage() {
         <ImportModal
           onClose={() => setShowImport(false)}
           onSave={handleSaveRecipes}
+        />
+      )}
+
+      {/* Access manager modal (admin only) */}
+      {showAccessManager && user?.email && (
+        <AccessManager
+          userEmail={user.email}
+          onClose={() => setShowAccessManager(false)}
         />
       )}
     </main>

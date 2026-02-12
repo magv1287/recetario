@@ -20,7 +20,8 @@
 /* Remove default blue focus outlines - we use custom focus styles */
 button:focus,
 a:focus,
-select:focus {
+select:focus,
+input:focus {
   outline: none;
 }
 
@@ -33,6 +34,7 @@ button:focus-visible {
 html {
   scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
+  font-size: 16px;
 }
 
 body {
@@ -100,5 +102,15 @@ body {
 @supports (padding: env(safe-area-inset-bottom)) {
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Touch targets - minimum 44px for mobile */
+@media (pointer: coarse) {
+  button, a, [role="button"] {
+    min-height: 44px;
   }
 }

@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     const mimeType = imageFile.type || "image/jpeg";
 
     // Send to Gemini Vision
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `Actúa como un chef experto. Analiza esta imagen que contiene una receta (puede ser un screenshot de Instagram, TikTok, un libro de cocina, o una foto de una receta).
 
@@ -69,10 +69,20 @@ Reglas:
     const data = JSON.parse(cleanJson);
 
     return NextResponse.json(data);
-  } catch (error) {
-    console.error("Error extracting from image:", error);
+  } catch (error: any) {
+    console.error("Error extracting from image:", error?.message || error);
+    
+    const message = error?.message || "";
+    let userError = "Error al procesar la imagen.";
+    
+    if (message.includes("429") || message.includes("quota") || message.includes("RESOURCE_EXHAUSTED")) {
+      userError = "Límite de uso de IA alcanzado. Espera un minuto e intenta de nuevo.";
+    } else if (message.includes("404") || message.includes("not found for API")) {
+      userError = "Error de configuración del servicio de IA. Contacta al administrador.";
+    }
+    
     return NextResponse.json(
-      { error: "Error al procesar la imagen" },
+      { error: userError },
       { status: 500 }
     );
   }

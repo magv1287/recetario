@@ -74,7 +74,7 @@ export async function POST(req: Request) {
 
     // Send to Gemini for extraction
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.5-flash",
       generationConfig: {
         maxOutputTokens: 8192,
         temperature: 0.1,
@@ -153,13 +153,20 @@ Reglas importantes:
     return NextResponse.json(data);
   } catch (error: any) {
     console.error("Error extracting from URL:", error?.message || error);
+    
+    const message = error?.message || "";
+    let userError = "Error al procesar la URL. Verifica que sea válida e intenta de nuevo.";
+    
+    if (message.includes("timeout") || message.includes("abort")) {
+      userError = "La página tardó demasiado en responder. Intenta de nuevo.";
+    } else if (message.includes("429") || message.includes("quota") || message.includes("RESOURCE_EXHAUSTED")) {
+      userError = "Límite de uso de IA alcanzado. Espera un minuto e intenta de nuevo.";
+    } else if (message.includes("404") || message.includes("not found for API")) {
+      userError = "Error de configuración del servicio de IA. Contacta al administrador.";
+    }
+    
     return NextResponse.json(
-      {
-        error:
-          error?.message?.includes("timeout") || error?.message?.includes("abort")
-            ? "La página tardó demasiado en responder. Intenta de nuevo."
-            : "Error al procesar la URL. Verifica que sea válida e intenta de nuevo.",
-      },
+      { error: userError },
       { status: 500 }
     );
   }

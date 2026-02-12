@@ -88,7 +88,7 @@ export async function POST(req: Request) {
         // We can't perfectly split by page with pdf-parse, but we tell Gemini
       }
 
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
       // Try to use PDF as inline data if text extraction failed
       if (!pdfText) {
@@ -173,10 +173,20 @@ Reglas:
     }
 
     return NextResponse.json({ error: "Acción no válida" }, { status: 400 });
-  } catch (error) {
-    console.error("Error extracting from PDF:", error);
+  } catch (error: any) {
+    console.error("Error extracting from PDF:", error?.message || error);
+    
+    const message = error?.message || "";
+    let userError = "Error al procesar el PDF.";
+    
+    if (message.includes("429") || message.includes("quota") || message.includes("RESOURCE_EXHAUSTED")) {
+      userError = "Límite de uso de IA alcanzado. Espera un minuto e intenta de nuevo.";
+    } else if (message.includes("404") || message.includes("not found for API")) {
+      userError = "Error de configuración del servicio de IA. Contacta al administrador.";
+    }
+    
     return NextResponse.json(
-      { error: "Error al procesar el PDF" },
+      { error: userError },
       { status: 500 }
     );
   }

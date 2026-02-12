@@ -19,17 +19,17 @@ export function DietFilter({ active, onChange }: DietFilterProps) {
   };
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+    <div className="flex gap-2.5 overflow-x-auto pb-2 no-scrollbar -mx-5 px-5">
       {DIETS.map((diet) => {
         const isActive = active.includes(diet.name);
         return (
           <button
             key={diet.name}
             onClick={() => toggle(diet.name)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border whitespace-nowrap transition-all shrink-0 ${
+            className={`px-4 py-2.5 rounded-2xl text-sm font-medium border whitespace-nowrap transition-all shrink-0 ${
               isActive
                 ? diet.color
-                : "bg-transparent border-zinc-800 text-zinc-500 hover:border-zinc-700"
+                : "bg-transparent border-zinc-800 text-zinc-500 hover:border-zinc-700 active:scale-95"
             }`}
           >
             {diet.name}

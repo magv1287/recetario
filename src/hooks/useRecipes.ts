@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import {
   collection,
   query,
-  where,
   orderBy,
   onSnapshot,
   addDoc,
@@ -28,9 +27,9 @@ export function useRecipes(userId: string | undefined) {
       return;
     }
 
+    // Fetch ALL recipes (shared between all authorized users)
     const q = query(
       collection(db, "recipes"),
-      where("userId", "==", userId),
       orderBy("createdAt", "desc")
     );
 
