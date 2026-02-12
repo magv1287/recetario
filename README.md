@@ -65,17 +65,30 @@ service cloud.firestore {
 
 **Nota:** Firebase Storage NO es necesario. Las imagenes se comprimen y guardan directamente en Firestore como base64 (sin costo adicional, sin plan Blaze).
 
-### 3. Configurar Gemini API Key
+### 3. Configurar variables de entorno
 
-El archivo `.env.local` ya deberia tener la key. Si no:
+Copia el archivo de ejemplo y completa los valores:
 
-1. Ve a [Google AI Studio](https://aistudio.google.com/apikey)
-2. Crea una API key
-3. Crea/edita el archivo `.env.local`:
+```bash
+cp .env.local.example .env.local
+```
+
+Edita `.env.local` con tus valores:
 
 ```
+# Gemini AI - obtener en https://aistudio.google.com/apikey
 GEMINI_API_KEY=tu_api_key_aqui
+
+# Firebase - obtener en Firebase Console > Project Settings > General > Your apps
+NEXT_PUBLIC_FIREBASE_API_KEY=tu_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu-proyecto.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=tu-proyecto-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tu-proyecto.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=tu_app_id
 ```
+
+**IMPORTANTE:** Estas mismas variables deben configurarse en Vercel al hacer deploy.
 
 ### 4. Ejecutar en local
 
@@ -118,8 +131,14 @@ git push -u origin main
 2. Ve a [vercel.com](https://vercel.com) e inicia sesion con GitHub
 3. Click en **"Add New" > "Project"**
 4. Selecciona tu repo `recetario`
-5. En **Environment Variables**, agrega:
-   - `GEMINI_API_KEY` = tu API key de Gemini
+5. En **Environment Variables**, agrega todas las variables de `.env.local`:
+   - `GEMINI_API_KEY`
+   - `NEXT_PUBLIC_FIREBASE_API_KEY`
+   - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+   - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+   - `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+   - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+   - `NEXT_PUBLIC_FIREBASE_APP_ID`
 6. Click **Deploy**
 
 Vercel te dara un dominio gratis tipo `recetario-xxx.vercel.app`.
