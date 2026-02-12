@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="40" fill="#09090b"/>
+  <g transform="translate(96,96)">
+    <!-- Chef hat -->
+    <g transform="translate(0,-10)">
+      <!-- Hat top circles -->
+      <circle cx="-24" cy="-30" r="20" fill="#f59e0b" opacity="0.9"/>
+      <circle cx="0" cy="-38" r="22" fill="#f59e0b"/>
+      <circle cx="24" cy="-30" r="20" fill="#f59e0b" opacity="0.9"/>
+      <!-- Hat body -->
+      <rect x="-30" y="-28" width="60" height="40" rx="4" fill="#f59e0b"/>
+      <!-- Hat band -->
+      <rect x="-32" y="10" width="64" height="8" rx="4" fill="#d97706"/>
+      <!-- Plate -->
+      <ellipse cx="0" cy="34" rx="40" ry="10" fill="#27272a"/>
+      <ellipse cx="0" cy="32" rx="36" ry="8" fill="#3f3f46"/>
+    </g>
+  </g>
+</svg>
