@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/components/AuthProvider";
 import { useRecipes } from "@/hooks/useRecipes";
 import { useFavorites } from "@/hooks/useFavorites";
-import { CategoryFilter } from "@/components/CategoryFilter";
-import { DietFilter } from "@/components/DietFilter";
 import { SearchBar } from "@/components/SearchBar";
 import { RecipeCard } from "@/components/RecipeCard";
 import { ImportModal } from "@/components/ImportModal";
@@ -306,52 +304,104 @@ export default function HomePage() {
         {/* ============ MAIN CONTENT ============ */}
         <div className="flex-1 min-w-0 lg:px-0 lg:pt-0 pb-32 lg:pb-10">
 
-          {/* ---- Mobile: search + filters area (more spacious) ---- */}
-          <div className="lg:hidden">
-            {/* Search bar - always visible, comfortable padding */}
-            <div className="px-5 pt-5 pb-4">
+          {/* ---- Mobile: clean, compact filter area ---- */}
+          <div className="lg:hidden pt-4 pb-2 space-y-3">
+            {/* Search bar */}
+            <div className="px-5">
               <SearchBar value={searchQuery} onChange={setSearchQuery} />
             </div>
 
-            {/* Favorites toggle + Category filters */}
-            <div className="px-5 pb-3">
-              <div className="flex items-center gap-2.5 mb-3">
-                <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Categorias</p>
+            {/* Favorites + Categories in one scrollable row */}
+            <div className="flex gap-2 overflow-x-auto no-scrollbar px-5">
+              {/* Favorites pill */}
+              <button
+                onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[13px] font-semibold whitespace-nowrap transition-all shrink-0 ${
+                  showFavoritesOnly
+                    ? "bg-red-500/15 border-red-500/30 text-red-400"
+                    : "bg-[#18181b] border-zinc-800 text-zinc-400 active:scale-95"
+                }`}
+              >
+                <Heart size={13} className={showFavoritesOnly ? "fill-red-400" : ""} />
+                Favoritos
+              </button>
+              {/* Divider dot */}
+              <div className="flex items-center shrink-0">
+                <span className="w-1 h-1 rounded-full bg-zinc-700" />
               </div>
-              <div className="flex gap-2.5 items-center">
-                {/* Favorites pill */}
+              {/* Category pills */}
+              {[{ name: "Todas" as "Todas" | Category, emoji: "📖" }, ...CATEGORIES].map((cat) => (
                 <button
-                  onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border text-sm font-semibold whitespace-nowrap transition-all shrink-0 ${
-                    showFavoritesOnly
-                      ? "bg-red-500/15 border-red-500/30 text-red-400"
+                  key={cat.name}
+                  onClick={() => setActiveCategory(cat.name)}
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[13px] font-semibold whitespace-nowrap transition-all shrink-0 ${
+                    activeCategory === cat.name
+                      ? "bg-amber-500 border-amber-500 text-black shadow-lg shadow-amber-500/20"
                       : "bg-[#18181b] border-zinc-800 text-zinc-400 active:scale-95"
                   }`}
                 >
-                  <Heart size={14} className={showFavoritesOnly ? "fill-red-400" : ""} />
-                  Favoritos
+                  <span className="text-sm">{cat.emoji}</span>
+                  {cat.name}
                 </button>
-              </div>
+              ))}
             </div>
 
-            <div className="pb-3">
-              <CategoryFilter active={activeCategory} onChange={setActiveCategory} />
+            {/* Diet pills - compact row */}
+            <div className="flex gap-2 overflow-x-auto no-scrollbar px-5">
+              {DIETS.map((diet) => {
+                const isActive = activeDiets.includes(diet.name);
+                return (
+                  <button
+                    key={diet.name}
+                    onClick={() => {
+                      if (isActive) {
+                        setActiveDiets(activeDiets.filter((d) => d !== diet.name));
+                      } else {
+                        setActiveDiets([...activeDiets, diet.name]);
+                      }
+                    }}
+                    className={`px-3.5 py-1.5 rounded-xl text-[13px] font-medium border whitespace-nowrap transition-all shrink-0 ${
+                      isActive
+                        ? diet.color
+                        : "bg-transparent border-zinc-800 text-zinc-500 active:scale-95"
+                    }`}
+                  >
+                    {diet.name}
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Diet filters */}
-            <div className="px-5 pb-2">
-              <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-3">Dietas</p>
+            {/* Recipe count + clear */}
+            <div className="flex items-center justify-between px-5 pt-1">
+              <p className="text-[13px] text-zinc-500 font-medium">
+                {showFavoritesOnly && (
+                  <Heart size={12} className="inline fill-red-400 text-red-400 mr-1 -mt-0.5" />
+                )}
+                {filteredRecipes.length}{" "}
+                {filteredRecipes.length === 1 ? "receta" : "recetas"}
+                {activeCategory !== "Todas" && (
+                  <span className="text-zinc-400 ml-1">
+                    en {getCategoryEmoji(activeCategory)} {activeCategory}
+                  </span>
+                )}
+                {showFavoritesOnly && (
+                  <span className="text-red-400/70 ml-1">favoritos</span>
+                )}
+              </p>
+              {hasFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="text-[13px] text-amber-500 font-medium"
+                >
+                  Limpiar
+                </button>
+              )}
             </div>
-            <div className="pb-4">
-              <DietFilter active={activeDiets} onChange={setActiveDiets} />
-            </div>
-
-            {/* Divider */}
-            <div className="mx-5 border-t border-zinc-800/60 mb-4" />
           </div>
 
-          {/* Recipe count + clear filters */}
-          <div className="flex items-center justify-between mb-5 px-5 lg:px-0">
+          {/* Desktop: recipe count + clear filters */}
+          <div className="hidden lg:flex items-center justify-between mb-5">
             <p className="text-sm text-zinc-500 font-medium">
               {showFavoritesOnly && (
                 <Heart size={13} className="inline fill-red-400 text-red-400 mr-1.5 -mt-0.5" />
