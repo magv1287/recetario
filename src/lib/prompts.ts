@@ -46,7 +46,7 @@ const JSON_FORMAT_SHOPPING = `SOLO JSON:
 {
   "items": [
     { "name": "Pechuga de pollo", "quantity": "3.3 lb (1.5 kg)", "category": "Proteinas" },
-    { "name": "Aguacate", "quantity": "14 unidades", "category": "Verduras" },
+    { "name": "Aguacate", "quantity": "5 unidades", "category": "Verduras" },
     { "name": "Aceite de oliva extra virgen", "quantity": "1 botella", "category": "Condimentos" }
   ]
 }
