@@ -1,41 +1,18 @@
 import { MealType } from "./types";
+import {
+  DIET_RULES,
+  VARIETY_RULES,
+  COOKING_INSTRUCTIONS,
+  SHOPPING_LIST_RULES,
+  AI_ROLE,
+  AI_SWAP_ROLE,
+} from "./prompts.config";
 
-const DIET_RULES = `DIETA ANTI-INFLAMATORIA (basada en recomendaciones del Dr. Guillermo Navarrete y Dr. Bayter):
-- Proteínas: mínimo 30g por comida (pollo, res, cerdo, pescado, mariscos, huevos, cordero, pavo)
-- Carbohidratos: máximo 10g netos por comida
-- ACEITES: SOLO aceite de oliva extra virgen o aceite de coco. PROHIBIDO cualquier aceite vegetal (canola, girasol, soja, maíz, cártamo)
-- MANTEQUILLA: siempre con sal
-- AGUACATE: usar generosamente en TODAS las comidas (medio a un aguacate entero por porción). Es la grasa estrella.
-- Grasas saludables: aceite de oliva extra virgen, aceite de coco, aguacate, frutos secos, mantequilla con sal, ghee, queso, crema
-- Verduras solo de bajo IG: brócoli, espinaca, coliflor, calabacín, espárragos, champiñones, pimiento, kale, bok choy, berenjena, apio, pepino, rúcula, rábano
-- Frutas SOLO en almuerzo y limitadas: fresas, arándanos, frambuesas
-- NO frutas en desayuno ni cena (aguacate sí permitido siempre)
-- PROHIBIDO: azúcar, miel, agave, harinas, pan, pasta, arroz, papa, maíz, cereales, avena, legumbres, aceites vegetales/semillas, margarina, alimentos ultraprocesados
-- Priorizar alimentos reales, antiinflamatorios, sin procesados`;
+// --- NO EDITAR ESTE ARCHIVO ---
+// Edita src/lib/prompts.config.ts para cambiar lo que se le dice a Gemini
+// Este archivo solo maneja el formato JSON técnico
 
-export function getWeeklyPlanPrompt(portions: number, existingRecipeTitles: string[] = []): string {
-  const excludeClause = existingRecipeTitles.length > 0
-    ? `\nRECETAS YA USADAS (NO repetir):\n${existingRecipeTitles.slice(-30).map(t => `- ${t}`).join("\n")}`
-    : "";
-
-  return `Crea un plan de comidas para 7 dias (desayuno, almuerzo, cena). Sé un chef creativo con cocina internacional.
-
-VARIEDAD:
-- Mezcla 5+ cocinas: mexicana, asiática, mediterránea, peruana, francesa, india, etc.
-- No repetir perfil de sabor dos dias seguidos
-- Alternar proteínas: pollo (max 3/semana), res, cerdo, pescado, salmón, camarones, pavo, huevos, cordero
-- Variar técnicas: plancha, horno, salteado, parrilla, estofado
-- Incluir aguacate de forma creativa en la mayoría de las comidas (guacamole, rodajas, relleno, salsa, aderezo)
-
-${DIET_RULES}
-
-PORCIONES: ${portions}
-
-PASOS: 4-6 pasos detallados con temperaturas, tiempos y señales visuales.
-INGREDIENTES: cantidades exactas (gramos, cucharadas, unidades). Siempre especificar "aceite de oliva extra virgen" o "aceite de coco", nunca solo "aceite".
-DESCRIPCION: 1-2 frases apetitosas.${excludeClause}
-
-Devuelve SOLO JSON válido:
+const JSON_FORMAT_WEEKLY = `Devuelve SOLO JSON válido:
 {
   "meals": {
     "monday": {
@@ -51,6 +28,50 @@ Categorías: Sopas, Carnes, Pescados, Ensaladas, Desayunos, Cenas, Snacks, Otros
 Dietas: Keto, Low Carb, Carnivora, Mediterranea
 
 SOLO JSON, nada más.`;
+
+const JSON_FORMAT_SWAP = `SOLO JSON:
+{
+  "title": "Nombre apetitoso",
+  "description": "1-2 frases con sabores y texturas",
+  "category": "Desayunos|Carnes|Pescados|Ensaladas|Cenas|Sopas|Otros",
+  "diets": ["Low Carb"],
+  "ingredients": ["cantidad + ingrediente + preparación"],
+  "steps": ["Paso detallado..."],
+  "macros": { "protein": 35, "carbs": 5, "fat": 20, "calories": 340 }
+}
+
+SOLO JSON, nada más.`;
+
+const JSON_FORMAT_SHOPPING = `SOLO JSON:
+{
+  "items": [
+    { "name": "Pechuga de pollo", "quantity": "1.5 kg", "category": "Proteinas" },
+    { "name": "Aguacate", "quantity": "14 unidades", "category": "Verduras" },
+    { "name": "Aceite de oliva extra virgen", "quantity": "1 botella", "category": "Condimentos" }
+  ]
+}
+
+Categorías: Proteinas, Verduras, Frutas, Lácteos, Condimentos, Otros
+
+SOLO JSON, nada más.`;
+
+export function getWeeklyPlanPrompt(portions: number, existingRecipeTitles: string[] = []): string {
+  const excludeClause = existingRecipeTitles.length > 0
+    ? `\nRECETAS YA USADAS (NO repetir):\n${existingRecipeTitles.slice(-30).map(t => `- ${t}`).join("\n")}`
+    : "";
+
+  return `${AI_ROLE}
+
+VARIEDAD:
+${VARIETY_RULES}
+
+${DIET_RULES}
+
+PORCIONES: ${portions}
+
+${COOKING_INSTRUCTIONS}${excludeClause}
+
+${JSON_FORMAT_WEEKLY}`;
 }
 
 export function getSwapRecipePrompt(
@@ -63,34 +84,20 @@ export function getSwapRecipePrompt(
   const fruitNote = mealType === "lunch"
     ? "Frutas permitidas en almuerzo: fresas, arándanos, frambuesas."
     : "NO frutas (aguacate sí permitido siempre).";
-
   const allExcluded = [currentTitle, ...excludeTitles].filter(Boolean);
 
-  return `Genera UNA receta alternativa para ${mealLabel}, diferente en sabor y cocina a las listadas.
+  return `${AI_SWAP_ROLE} Para ${mealLabel}.
 
 ${DIET_RULES}
 ${fruitNote}
-Incluir aguacate generosamente.
 PORCIONES: ${portions}
 
 EVITAR (ser MUY diferente):
 ${allExcluded.slice(-15).map(t => `- ${t}`).join("\n")}
 
-Pasos: 4-6 detallados con temperaturas y tiempos. Ingredientes con cantidades exactas.
-Siempre especificar "aceite de oliva extra virgen" o "aceite de coco", nunca solo "aceite".
+${COOKING_INSTRUCTIONS}
 
-SOLO JSON:
-{
-  "title": "Nombre apetitoso",
-  "description": "1-2 frases con sabores y texturas",
-  "category": "Desayunos|Carnes|Pescados|Ensaladas|Cenas|Sopas|Otros",
-  "diets": ["Low Carb"],
-  "ingredients": ["cantidad + ingrediente + preparación"],
-  "steps": ["Paso detallado..."],
-  "macros": { "protein": 35, "carbs": 5, "fat": 20, "calories": 340 }
-}
-
-SOLO JSON, nada más.`;
+${JSON_FORMAT_SWAP}`;
 }
 
 export function getShoppingListPrompt(allIngredients: string[]): string {
@@ -99,23 +106,7 @@ export function getShoppingListPrompt(allIngredients: string[]): string {
 ${allIngredients.join("\n")}
 
 REGLAS:
-1. Suma cantidades iguales (200g pollo + 300g pollo = 500g)
-2. Redondea a cantidades prácticas
-3. Agrupa por sección del supermercado
-4. Unifica genéricos y específicos
-5. Si aparece "aceite" sin especificar, siempre poner "Aceite de oliva extra virgen"
-6. Asegurarse de incluir suficientes aguacates (sumar todos los que aparezcan)
+${SHOPPING_LIST_RULES}
 
-SOLO JSON:
-{
-  "items": [
-    { "name": "Pechuga de pollo", "quantity": "1.5 kg", "category": "Proteinas" },
-    { "name": "Aguacate", "quantity": "14 unidades", "category": "Verduras" },
-    { "name": "Aceite de oliva extra virgen", "quantity": "1 botella", "category": "Condimentos" }
-  ]
-}
-
-Categorías: Proteinas, Verduras, Frutas, Lácteos, Condimentos, Otros
-
-SOLO JSON, nada más.`;
+${JSON_FORMAT_SHOPPING}`;
 }
