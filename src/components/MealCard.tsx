@@ -1,7 +1,7 @@
 "use client";
 
 import { Recipe, MealType, MEAL_LABELS } from "@/lib/types";
-import { Lock, Unlock, RefreshCw, ChefHat } from "lucide-react";
+import { Lock, Unlock, RefreshCw, ChefHat, Flame, Wheat, Drumstick } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface MealCardProps {
@@ -25,65 +25,101 @@ const mealBgColors: Record<MealType, string> = {
   dinner: "bg-purple-400/8",
 };
 
+const mealBorderColors: Record<MealType, string> = {
+  breakfast: "border-amber-400/20",
+  lunch: "border-[var(--sage)]/20",
+  dinner: "border-purple-400/20",
+};
+
 export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compact }: MealCardProps) {
   const router = useRouter();
 
   if (!recipe) {
     return (
-      <div className={`bg-[var(--card)] border border-dashed border-[var(--border-light)] rounded-xl ${compact ? "p-3" : "p-4"} flex items-center justify-center`}>
+      <div className={`bg-[var(--card)] border border-dashed border-[var(--border-light)] rounded-2xl ${compact ? "p-4" : "p-5"} flex items-center justify-center min-h-[80px]`}>
         <div className="text-center">
-          <ChefHat size={compact ? 16 : 20} className="text-[var(--border-light)] mx-auto mb-1" />
-          <p className="text-[11px] text-[var(--muted-dark)]">{MEAL_LABELS[mealType]}</p>
+          <ChefHat size={compact ? 18 : 22} className="text-[var(--border-light)] mx-auto mb-1.5" />
+          <p className="text-[12px] text-[var(--muted-dark)] font-medium">{MEAL_LABELS[mealType]}</p>
         </div>
       </div>
     );
   }
 
+  if (compact) {
+    return (
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[var(--border-light)] transition-all group">
+        <div className={`flex items-center justify-between px-3 py-1.5 ${mealBgColors[mealType]} border-b ${mealBorderColors[mealType]}`}>
+          <span className={`text-[11px] font-bold uppercase tracking-wide ${mealColors[mealType]}`}>{MEAL_LABELS[mealType]}</span>
+          <div className="flex items-center gap-0.5">
+            <button onClick={(e) => { e.stopPropagation(); onToggleLock(); }} className="p-1 rounded text-[var(--muted-dark)] hover:text-[var(--muted)] transition-colors" title={locked ? "Desbloquear" : "Bloquear"}>
+              {locked ? <Lock size={11} /> : <Unlock size={11} />}
+            </button>
+            <button onClick={(e) => { e.stopPropagation(); onSwap(); }} className="p-1 rounded text-[var(--muted-dark)] hover:text-[var(--accent)] transition-colors" title="Cambiar receta">
+              <RefreshCw size={11} />
+            </button>
+          </div>
+        </div>
+
+        <button onClick={() => router.push(`/recipe/${recipe.id}`)} className="w-full text-left active:bg-[var(--card-hover)] transition-colors">
+          {recipe.imageUrl && (
+            <div className="w-full aspect-[16/9] overflow-hidden">
+              <img src={recipe.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+            </div>
+          )}
+          <div className="p-3">
+            <p className="text-[13px] font-semibold text-[var(--foreground)] leading-snug line-clamp-2 mb-1.5">
+              {recipe.title}
+            </p>
+            {recipe.macros && (
+              <div className="flex items-center gap-2 text-[10px] text-[var(--muted-dark)]">
+                <span className="flex items-center gap-0.5"><Drumstick size={9} />{recipe.macros.protein}g</span>
+                <span className="flex items-center gap-0.5"><Wheat size={9} />{recipe.macros.carbs}g</span>
+                <span className="flex items-center gap-0.5"><Flame size={9} />{recipe.macros.calories}</span>
+              </div>
+            )}
+          </div>
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className={`bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden hover:border-[var(--border-light)] transition-all group ${compact ? "" : ""}`}>
-      <div className={`flex items-center gap-1.5 px-3 py-1.5 ${mealBgColors[mealType]} border-b border-[var(--border)]`}>
-        <span className={`text-[11px] font-semibold ${mealColors[mealType]}`}>{MEAL_LABELS[mealType]}</span>
-        <div className="ml-auto flex items-center gap-0.5">
-          <button
-            onClick={(e) => { e.stopPropagation(); onToggleLock(); }}
-            className="p-1 rounded text-[var(--muted-dark)] hover:text-[var(--muted)] transition-colors"
-            title={locked ? "Desbloquear" : "Bloquear"}
-          >
-            {locked ? <Lock size={12} /> : <Unlock size={12} />}
+    <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[var(--border-light)] transition-all group">
+      <div className={`flex items-center justify-between px-4 py-2 ${mealBgColors[mealType]} border-b ${mealBorderColors[mealType]}`}>
+        <span className={`text-[12px] font-bold uppercase tracking-wide ${mealColors[mealType]}`}>{MEAL_LABELS[mealType]}</span>
+        <div className="flex items-center gap-1">
+          <button onClick={(e) => { e.stopPropagation(); onToggleLock(); }} className="p-1.5 rounded-lg text-[var(--muted-dark)] hover:text-[var(--muted)] hover:bg-white/5 transition-colors" title={locked ? "Desbloquear" : "Bloquear"}>
+            {locked ? <Lock size={14} /> : <Unlock size={14} />}
           </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); onSwap(); }}
-            className="p-1 rounded text-[var(--muted-dark)] hover:text-[var(--accent)] transition-colors"
-            title="Cambiar receta"
-          >
-            <RefreshCw size={12} />
+          <button onClick={(e) => { e.stopPropagation(); onSwap(); }} className="p-1.5 rounded-lg text-[var(--muted-dark)] hover:text-[var(--accent)] hover:bg-[var(--accent-soft)] transition-colors" title="Cambiar receta">
+            <RefreshCw size={14} />
           </button>
         </div>
       </div>
 
-      <button
-        onClick={() => router.push(`/recipe/${recipe.id}`)}
-        className={`w-full text-left ${compact ? "p-2.5" : "p-3"} active:bg-[var(--card-hover)] transition-colors`}
-      >
-        <div className="flex items-start gap-2.5">
-          {recipe.imageUrl ? (
-            <img
-              src={recipe.imageUrl}
-              alt=""
-              className={`${compact ? "w-8 h-8" : "w-10 h-10"} rounded-lg object-cover shrink-0`}
-              loading="lazy"
-            />
-          ) : null}
-          <div className="min-w-0 flex-1">
-            <p className={`font-medium text-[var(--foreground)] ${compact ? "text-[11px] leading-tight line-clamp-2" : "text-[13px] leading-snug line-clamp-2"}`}>
-              {recipe.title}
-            </p>
-            {recipe.macros && !compact && (
-              <p className="text-[10px] text-[var(--muted-dark)] mt-1">
-                {recipe.macros.protein}g prot · {recipe.macros.carbs}g carb · {recipe.macros.calories} kcal
-              </p>
-            )}
+      <button onClick={() => router.push(`/recipe/${recipe.id}`)} className="w-full text-left active:bg-[var(--card-hover)] transition-colors">
+        {recipe.imageUrl && (
+          <div className="w-full aspect-[2/1] overflow-hidden">
+            <img src={recipe.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
           </div>
+        )}
+        <div className="p-4">
+          <p className="text-[15px] font-semibold text-[var(--foreground)] leading-snug line-clamp-2 mb-2">
+            {recipe.title}
+          </p>
+          {recipe.macros && (
+            <div className="flex items-center gap-3 text-[11px]">
+              <span className="flex items-center gap-1 text-[var(--sage)] font-medium">
+                <Drumstick size={11} />{recipe.macros.protein}g prot
+              </span>
+              <span className="flex items-center gap-1 text-amber-400/70 font-medium">
+                <Wheat size={11} />{recipe.macros.carbs}g carb
+              </span>
+              <span className="flex items-center gap-1 text-[var(--muted-dark)] font-medium">
+                <Flame size={11} />{recipe.macros.calories} kcal
+              </span>
+            </div>
+          )}
         </div>
       </button>
     </div>

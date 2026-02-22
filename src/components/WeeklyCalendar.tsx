@@ -15,6 +15,16 @@ interface WeeklyCalendarProps {
 
 const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "dinner"];
 
+const SHORT_DAY: Record<DayOfWeek, string> = {
+  monday: "Lun",
+  tuesday: "Mar",
+  wednesday: "Mié",
+  thursday: "Jue",
+  friday: "Vie",
+  saturday: "Sáb",
+  sunday: "Dom",
+};
+
 export function WeeklyCalendar({ plan, recipes, weekId, onToggleLock, onPlanUpdated }: WeeklyCalendarProps) {
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>(getCurrentDay());
   const [swapTarget, setSwapTarget] = useState<{ day: DayOfWeek; meal: MealType } | null>(null);
@@ -35,32 +45,34 @@ export function WeeklyCalendar({ plan, recipes, weekId, onToggleLock, onPlanUpda
     return plan?.meals?.[day]?.[meal]?.locked ?? false;
   };
 
-  if (!plan) {
-    return null;
-  }
+  if (!plan) return null;
 
   return (
     <>
-      {/* Mobile: day tabs + vertical meal cards */}
+      {/* Mobile: day selector + vertical cards */}
       <div className="lg:hidden">
-        <div className="flex gap-1.5 overflow-x-auto no-scrollbar px-5 mb-4">
-          {DAYS_OF_WEEK.map((day) => (
-            <button
-              key={day}
-              onClick={() => setSelectedDay(day)}
-              className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                selectedDay === day
-                  ? "bg-[var(--accent)] text-black"
-                  : "bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] active:scale-95"
-              }`}
-            >
-              {DAY_LABELS[day].slice(0, 3)}
-            </button>
-          ))}
+        <div className="flex gap-1 mb-5">
+          {DAYS_OF_WEEK.map((day) => {
+            const isActive = selectedDay === day;
+            return (
+              <button
+                key={day}
+                onClick={() => setSelectedDay(day)}
+                className={`flex-1 py-2.5 rounded-xl text-center transition-all ${
+                  isActive
+                    ? "bg-[var(--accent)] text-black shadow-lg shadow-[var(--accent)]/20"
+                    : "bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] active:scale-95"
+                }`}
+              >
+                <span className={`text-[12px] font-bold ${isActive ? "" : ""}`}>{SHORT_DAY[day]}</span>
+              </button>
+            );
+          })}
         </div>
 
-        <div className="px-5 space-y-3">
-          <h3 className="text-sm font-bold text-[var(--foreground)]">{DAY_LABELS[selectedDay]}</h3>
+        <h3 className="text-base font-bold text-[var(--foreground)] mb-3 pl-1">{DAY_LABELS[selectedDay]}</h3>
+
+        <div className="space-y-3">
           {MEAL_TYPES.map((meal) => (
             <MealCard
               key={meal}
@@ -74,17 +86,15 @@ export function WeeklyCalendar({ plan, recipes, weekId, onToggleLock, onPlanUpda
         </div>
       </div>
 
-      {/* Desktop: full 7-column grid */}
+      {/* Desktop: full 7-column grid with images */}
       <div className="hidden lg:block">
-        <div className="grid grid-cols-7 gap-3">
-          {/* Day headers */}
+        <div className="grid grid-cols-7 gap-4">
           {DAYS_OF_WEEK.map((day) => (
-            <div key={day} className="text-center pb-2">
-              <p className="text-xs font-semibold text-[var(--muted-dark)] uppercase tracking-wider">{DAY_LABELS[day]}</p>
+            <div key={day} className="text-center pb-3 border-b border-[var(--border)]">
+              <p className="text-[13px] font-bold text-[var(--foreground)] tracking-wide">{DAY_LABELS[day]}</p>
             </div>
           ))}
 
-          {/* Meal rows */}
           {MEAL_TYPES.map((meal) => (
             DAYS_OF_WEEK.map((day) => (
               <MealCard
@@ -99,8 +109,6 @@ export function WeeklyCalendar({ plan, recipes, weekId, onToggleLock, onPlanUpda
             ))
           ))}
         </div>
-
-        {/* Meal type labels on the left side are implied by the MealCard headers */}
       </div>
 
       {swapTarget && (
