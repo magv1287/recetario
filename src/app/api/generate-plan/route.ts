@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase-admin";
+import { adminDb, checkAdminReady } from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import { getRecipeModel, parseGeminiJson } from "@/lib/gemini";
 import { getWeeklyPlanPrompt } from "@/lib/prompts";
@@ -11,10 +11,30 @@ const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "dinner"];
 
 export async function POST(req: Request) {
   try {
+    const adminError = checkAdminReady();
+    if (adminError) {
+      console.error("Admin SDK not ready:", adminError);
+      return NextResponse.json(
+        { error: `Configuracion del servidor incompleta: ${adminError}` },
+        { status: 500 }
+      );
+    }
+
     const { weekId, portions, regenerate, userId } = await req.json();
 
     if (!weekId || !userId) {
       return NextResponse.json({ error: "Faltan parametros requeridos" }, { status: 400 });
+    }
+
+    // Verify Firestore connection before calling Gemini (fail-fast)
+    try {
+      await adminDb.collection("recipes").limit(1).get();
+    } catch (fsErr: any) {
+      console.error("Firestore connection failed:", fsErr?.message);
+      return NextResponse.json(
+        { error: "Error de conexion a la base de datos. Verifica FIREBASE_SERVICE_ACCOUNT_KEY." },
+        { status: 500 }
+      );
     }
 
     const portionCount = portions || 2;
@@ -32,11 +52,28 @@ export async function POST(req: Request) {
       }
     }
 
+    // Call Gemini only after Firestore is confirmed working
     const model = getRecipeModel();
     const prompt = getWeeklyPlanPrompt(portionCount, existingTitles.slice(-50));
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
+    let responseText: string;
+    try {
+      const result = await model.generateContent(prompt);
+      responseText = result.response.text();
+    } catch (aiErr: any) {
+      console.error("Gemini API error:", aiErr?.message);
+      const msg = aiErr?.message || "";
+      if (msg.includes("429") || msg.includes("quota") || msg.includes("RESOURCE_EXHAUSTED")) {
+        return NextResponse.json(
+          { error: "Limite de uso de IA alcanzado. Espera 1-2 minutos e intenta de nuevo." },
+          { status: 429 }
+        );
+      }
+      return NextResponse.json(
+        { error: `Error de IA: ${msg.substring(0, 100)}` },
+        { status: 500 }
+      );
+    }
 
     let data;
     try {
@@ -101,13 +138,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, weekId, recipeIds: createdRecipeIds });
   } catch (error: any) {
     console.error("Error generating plan:", error?.message || error);
-
-    let userError = "Error al generar el plan semanal. Intenta de nuevo.";
-    const msg = error?.message || "";
-    if (msg.includes("429") || msg.includes("quota") || msg.includes("RESOURCE_EXHAUSTED")) {
-      userError = "Limite de uso de IA alcanzado. Espera un minuto e intenta de nuevo.";
-    }
-
-    return NextResponse.json({ error: userError }, { status: 500 });
+    return NextResponse.json(
+      { error: `Error inesperado: ${(error?.message || "desconocido").substring(0, 150)}` },
+      { status: 500 }
+    );
   }
 }
