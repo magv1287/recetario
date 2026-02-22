@@ -3,7 +3,6 @@ import { doc, getDoc, updateDoc, addDoc, collection, serverTimestamp } from "fir
 import { db } from "@/lib/firebase";
 import { getRecipeModel, parseGeminiJson } from "@/lib/gemini";
 import { getSwapRecipePrompt } from "@/lib/prompts";
-import { searchFoodImage } from "@/lib/images";
 import { WeeklyPlan, DayOfWeek, MealType, DAYS_OF_WEEK } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -64,8 +63,6 @@ export async function POST(req: Request) {
       );
     }
 
-    const imageUrl = await searchFoodImage(recipeData.title || recipeData.category || "food");
-
     const recipeDoc = await addDoc(collection(db, "recipes"), {
       title: recipeData.title || "Sin titulo",
       description: recipeData.description || "",
@@ -73,7 +70,7 @@ export async function POST(req: Request) {
       diets: recipeData.diets || ["Low Carb"],
       ingredients: recipeData.ingredients || [],
       steps: recipeData.steps || [],
-      imageUrl,
+      imageUrl: "",
       source: "ai",
       mealType: meal,
       macros: recipeData.macros || null,

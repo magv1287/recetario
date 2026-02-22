@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { WeeklyPlan, DayOfWeek, MealType, Recipe } from "@/lib/types";
@@ -32,10 +32,40 @@ export function getWeekDates(weekId: string): { start: Date; end: Date } {
   return { start, end };
 }
 
+async function enrichRecipeImages(recipes: Record<string, Recipe>): Promise<void> {
+  const needsImage = Object.entries(recipes)
+    .filter(([, r]) => !r.imageUrl && r.source === "ai")
+    .map(([id]) => id);
+
+  if (needsImage.length === 0) return;
+
+  let remaining = [...needsImage];
+
+  while (remaining.length > 0) {
+    try {
+      const res = await fetch("/api/enrich-images", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipeIds: remaining }),
+      });
+
+      if (!res.ok) break;
+
+      const data = await res.json();
+      remaining = data.remaining || [];
+
+      if (data.done) break;
+    } catch {
+      break;
+    }
+  }
+}
+
 export function useWeeklyPlan(userId: string | undefined, weekId: string) {
   const [plan, setPlan] = useState<WeeklyPlan | null>(null);
   const [recipes, setRecipes] = useState<Record<string, Recipe>>({});
   const [loading, setLoading] = useState(true);
+  const enrichingRef = useRef(false);
 
   useEffect(() => {
     if (!userId || !weekId) {
@@ -89,6 +119,13 @@ export function useWeeklyPlan(userId: string | undefined, weekId: string) {
       })
     );
     setRecipes(loaded);
+
+    if (!enrichingRef.current) {
+      enrichingRef.current = true;
+      enrichRecipeImages(loaded).finally(() => {
+        enrichingRef.current = false;
+      });
+    }
   };
 
   const toggleLock = useCallback(

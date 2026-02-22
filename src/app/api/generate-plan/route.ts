@@ -3,7 +3,6 @@ import { collection, doc, setDoc, addDoc, serverTimestamp, getDocs, query, where
 import { db } from "@/lib/firebase";
 import { getRecipeModel, parseGeminiJson } from "@/lib/gemini";
 import { getWeeklyPlanPrompt } from "@/lib/prompts";
-import { searchFoodImage } from "@/lib/images";
 import { DayOfWeek, MealType, DAYS_OF_WEEK } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -60,49 +59,37 @@ export async function POST(req: Request) {
     }
 
     const planMeals: Record<string, Record<string, { recipeId: string; locked: boolean }>> = {};
+    const createdRecipeIds: string[] = [];
 
-    const recipeEntries: { day: DayOfWeek; meal: MealType; data: any }[] = [];
     for (const day of DAYS_OF_WEEK) {
+      planMeals[day] = {};
+
       for (const meal of MEAL_TYPES) {
         const recipeData = data.meals[day]?.[meal];
-        if (recipeData) {
-          recipeEntries.push({ day, meal, data: recipeData });
-        }
+        if (!recipeData) continue;
+
+        const recipeDoc = await addDoc(collection(db, "recipes"), {
+          title: recipeData.title || "Sin titulo",
+          description: recipeData.description || "",
+          category: recipeData.category || "Otros",
+          diets: recipeData.diets || ["Low Carb"],
+          ingredients: recipeData.ingredients || [],
+          steps: recipeData.steps || [],
+          imageUrl: "",
+          source: "ai",
+          mealType: meal,
+          macros: recipeData.macros || null,
+          userId,
+          createdAt: serverTimestamp(),
+        });
+
+        createdRecipeIds.push(recipeDoc.id);
+
+        planMeals[day][meal] = {
+          recipeId: recipeDoc.id,
+          locked: false,
+        };
       }
-    }
-
-    const images = await Promise.allSettled(
-      recipeEntries.map((entry) =>
-        searchFoodImage(entry.data.title || entry.data.category || "food")
-      )
-    );
-
-    for (let i = 0; i < recipeEntries.length; i++) {
-      const { day, meal, data: recipeData } = recipeEntries[i];
-      const imgResult = images[i];
-      const imageUrl = imgResult.status === "fulfilled" ? imgResult.value : "";
-
-      if (!planMeals[day]) planMeals[day] = {};
-
-      const recipeDoc = await addDoc(collection(db, "recipes"), {
-        title: recipeData.title || "Sin titulo",
-        description: recipeData.description || "",
-        category: recipeData.category || "Otros",
-        diets: recipeData.diets || ["Low Carb"],
-        ingredients: recipeData.ingredients || [],
-        steps: recipeData.steps || [],
-        imageUrl,
-        source: "ai",
-        mealType: meal,
-        macros: recipeData.macros || null,
-        userId,
-        createdAt: serverTimestamp(),
-      });
-
-      planMeals[day][meal] = {
-        recipeId: recipeDoc.id,
-        locked: false,
-      };
     }
 
     await setDoc(doc(db, "weeklyPlans", weekId), {
@@ -113,7 +100,7 @@ export async function POST(req: Request) {
       meals: planMeals,
     });
 
-    return NextResponse.json({ success: true, weekId });
+    return NextResponse.json({ success: true, weekId, recipeIds: createdRecipeIds });
   } catch (error: any) {
     console.error("Error generating plan:", error?.message || error);
 
