@@ -41,7 +41,7 @@ export const VARIETY_RULES = `
 // ------------------------------------------------------------
 export const COOKING_INSTRUCTIONS = `
 - PASOS: 4-6 pasos detallados con temperaturas, tiempos y señales visuales
-- INGREDIENTES: cantidades exactas (gramos, cucharadas, unidades). Siempre especificar "aceite de oliva extra virgen" o "aceite de coco", nunca solo "aceite"
+- INGREDIENTES: cantidades exactas mostrando SIEMPRE ambas unidades: libras y gramos/kg juntos. Ejemplos: "0.5 lb (227g) pollo", "1.1 lb (500g) res", "3.3 lb (1.5 kg) salmón", "30g (1 oz) queso". Siempre especificar "aceite de oliva extra virgen" o "aceite de coco", nunca solo "aceite"
 - DESCRIPCION: 1-2 frases apetitosas
 `.trim();
 
@@ -56,6 +56,7 @@ export const SHOPPING_LIST_RULES = `
 4. Unifica genéricos y específicos
 5. Si aparece "aceite" sin especificar, siempre poner "Aceite de oliva extra virgen"
 6. Asegurarse de incluir suficientes aguacates (sumar todos los que aparezcan)
+7. UNIDADES: mostrar SIEMPRE ambas unidades juntas. Ejemplos: "3.3 lb (1.5 kg)", "0.5 lb (227g)", "30g (1 oz)". NUNCA mostrar solo una unidad
 `.trim();
 
 // ------------------------------------------------------------

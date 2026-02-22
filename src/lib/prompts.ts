@@ -16,7 +16,7 @@ const JSON_FORMAT_WEEKLY = `Devuelve SOLO JSON válido:
 {
   "meals": {
     "monday": {
-      "breakfast": { "title": "Nombre", "description": "...", "category": "Desayunos", "diets": ["Low Carb"], "ingredients": ["200g pollo, en tiras", "1 aguacate maduro, en rodajas", "2 cucharadas de aceite de oliva extra virgen"], "steps": ["Paso detallado..."], "macros": { "protein": 35, "carbs": 5, "fat": 20, "calories": 340 } },
+      "breakfast": { "title": "Nombre", "description": "...", "category": "Desayunos", "diets": ["Low Carb"], "ingredients": ["0.5 lb (227g) pollo, en tiras", "1 aguacate maduro, en rodajas", "2 cucharadas de aceite de oliva extra virgen"], "steps": ["Paso detallado..."], "macros": { "protein": 35, "carbs": 5, "fat": 20, "calories": 340 } },
       "lunch": { "title": "...", "description": "...", "category": "Carnes", "diets": ["Low Carb"], "ingredients": ["..."], "steps": ["..."], "macros": { "protein": 40, "carbs": 8, "fat": 25, "calories": 420 } },
       "dinner": { "title": "...", "description": "...", "category": "Cenas", "diets": ["Low Carb"], "ingredients": ["..."], "steps": ["..."], "macros": { "protein": 38, "carbs": 6, "fat": 22, "calories": 380 } }
     },
@@ -45,7 +45,7 @@ SOLO JSON, nada más.`;
 const JSON_FORMAT_SHOPPING = `SOLO JSON:
 {
   "items": [
-    { "name": "Pechuga de pollo", "quantity": "1.5 kg", "category": "Proteinas" },
+    { "name": "Pechuga de pollo", "quantity": "3.3 lb (1.5 kg)", "category": "Proteinas" },
     { "name": "Aguacate", "quantity": "14 unidades", "category": "Verduras" },
     { "name": "Aceite de oliva extra virgen", "quantity": "1 botella", "category": "Condimentos" }
   ]
