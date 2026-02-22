@@ -1,0 +1,65 @@
+import Bring from "bring-shopping";
+import { ShoppingItem } from "./types";
+
+let bringInstance: InstanceType<typeof Bring> | null = null;
+let loggedIn = false;
+
+async function getBring(): Promise<InstanceType<typeof Bring>> {
+  const email = process.env.BRING_EMAIL;
+  const password = process.env.BRING_PASSWORD;
+
+  if (!email || !password) {
+    throw new Error("Credenciales de Bring! no configuradas (BRING_EMAIL, BRING_PASSWORD)");
+  }
+
+  if (!bringInstance || !loggedIn) {
+    bringInstance = new Bring({ mail: email, password });
+    await bringInstance.login();
+    loggedIn = true;
+  }
+
+  return bringInstance;
+}
+
+export async function syncToBring(items: ShoppingItem[], listName: string): Promise<string> {
+  const bring = await getBring();
+
+  const lists = await bring.loadLists();
+  let targetList = lists.lists?.find(
+    (l: any) => l.name === listName
+  );
+
+  if (!targetList) {
+    const allLists = lists.lists || [];
+    if (allLists.length > 0) {
+      targetList = allLists[0];
+    } else {
+      throw new Error("No se encontro ninguna lista en Bring!. Crea una lista primero en la app.");
+    }
+  }
+
+  const listUuid = targetList.listUuid;
+
+  const currentItems = await bring.getItems(listUuid);
+  if (currentItems?.purchase) {
+    for (const existingItem of currentItems.purchase) {
+      try {
+        await bring.removeItem(listUuid, existingItem.name);
+      } catch {
+        // skip if can't remove
+      }
+    }
+  }
+
+  for (const item of items) {
+    if (item.name) {
+      try {
+        await bring.saveItem(listUuid, item.name, item.quantity || "");
+      } catch (err) {
+        console.error(`Error adding item "${item.name}" to Bring!:`, err);
+      }
+    }
+  }
+
+  return listUuid;
+}

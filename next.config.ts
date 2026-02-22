@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  serverExternalPackages: ["pdf-parse"],
+  serverExternalPackages: ["pdf-parse", "bring-shopping"],
 };
 
 export default nextConfig;

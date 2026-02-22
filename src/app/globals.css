@@ -2,13 +2,18 @@
 
 :root {
   --background: #09090b;
-  --foreground: #fafafa;
-  --card: #18181b;
-  --card-hover: #1f1f23;
-  --border: #27272a;
-  --accent: #f59e0b;
-  --accent-hover: #d97706;
-  --muted: #a1a1aa;
+  --foreground: #F5F5F4;
+  --card: #111113;
+  --card-hover: #1a1a1d;
+  --border: #1E1E22;
+  --border-light: #2a2a2e;
+  --accent: #D4A017;
+  --accent-hover: #B8890F;
+  --accent-soft: rgba(212, 160, 23, 0.1);
+  --muted: #A8A8A8;
+  --muted-dark: #5A5A5E;
+  --sage: #6B9B7B;
+  --sage-soft: rgba(107, 155, 123, 0.12);
 }
 
 * {
@@ -17,7 +22,6 @@
   box-sizing: border-box;
 }
 
-/* Remove default blue focus outlines - we use custom focus styles */
 button:focus,
 a:focus,
 select:focus,
@@ -26,7 +30,7 @@ input:focus {
 }
 
 button:focus-visible {
-  outline: 2px solid #f59e0b;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 8px;
 }
@@ -46,7 +50,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Hide scrollbar but allow scrolling */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -55,24 +58,22 @@ body {
   scrollbar-width: none;
 }
 
-/* Custom scrollbar for main content */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #2a2a2e;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+  background: #3f3f46;
 }
 
-/* Smooth animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -82,12 +83,17 @@ body {
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
 }
 
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 .animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.25s ease-out;
 }
 
 .animate-slideUp {
@@ -98,7 +104,12 @@ body {
   animation: scaleIn 0.2s ease-out;
 }
 
-/* iPhone safe areas */
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--card) 25%, var(--card-hover) 50%, var(--card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
 @supports (padding: env(safe-area-inset-bottom)) {
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
@@ -106,15 +117,20 @@ body {
   .safe-top {
     padding-top: env(safe-area-inset-top);
   }
-  /* FAB: push up by safe area so it clears the home indicator */
   .safe-bottom-fab {
     bottom: calc(2rem + env(safe-area-inset-bottom));
   }
+  .safe-bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
-/* Touch targets - minimum 44px for mobile */
 @media (pointer: coarse) {
   button, a, [role="button"] {
     min-height: 44px;
   }
+}
+
+.bottom-nav-spacer {
+  height: calc(5rem + env(safe-area-inset-bottom, 0px));
 }

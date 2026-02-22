@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
+import { AppShell } from "@/components/AppShell";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -10,7 +11,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Recetario",
-  description: "Tu recetario personal inteligente",
+  description: "Tu recetario y planificador de comidas semanal",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -39,7 +40,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${inter.variable} font-sans`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <AppShell>{children}</AppShell>
+        </AuthProvider>
       </body>
     </html>
   );
