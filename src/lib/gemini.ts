@@ -17,9 +17,8 @@ export function getRecipeModel() {
     model: "gemini-2.5-flash",
     generationConfig: {
       maxOutputTokens: 32768,
-      temperature: 0.85,
+      temperature: 0.7,
     },
-    tools: [{ googleSearchRetrieval: {} } as any],
   });
 }
 

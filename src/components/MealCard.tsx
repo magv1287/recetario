@@ -66,14 +66,14 @@ export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compa
         className={`w-full text-left ${compact ? "p-2.5" : "p-3"} active:bg-[var(--card-hover)] transition-colors`}
       >
         <div className="flex items-start gap-2.5">
-          {recipe.imageUrl && !compact && (
+          {recipe.imageUrl ? (
             <img
               src={recipe.imageUrl}
               alt=""
-              className="w-10 h-10 rounded-lg object-cover shrink-0"
+              className={`${compact ? "w-8 h-8" : "w-10 h-10"} rounded-lg object-cover shrink-0`}
               loading="lazy"
             />
-          )}
+          ) : null}
           <div className="min-w-0 flex-1">
             <p className={`font-medium text-[var(--foreground)] ${compact ? "text-[11px] leading-tight line-clamp-2" : "text-[13px] leading-snug line-clamp-2"}`}>
               {recipe.title}

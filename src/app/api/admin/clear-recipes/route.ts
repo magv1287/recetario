@@ -15,26 +15,30 @@ export async function POST(req: Request) {
       );
     }
 
-    const recipesSnap = await getDocs(collection(db, "recipes"));
-    let deleted = 0;
+    const collections = ["recipes", "weeklyPlans", "shoppingLists"];
+    const results: Record<string, number> = {};
 
-    const batch: Promise<void>[] = [];
-    recipesSnap.forEach((docSnap) => {
-      batch.push(deleteDoc(doc(db, "recipes", docSnap.id)));
-      deleted++;
-    });
-
-    await Promise.all(batch);
+    for (const col of collections) {
+      const snap = await getDocs(collection(db, col));
+      let count = 0;
+      const deletes: Promise<void>[] = [];
+      snap.forEach((docSnap) => {
+        deletes.push(deleteDoc(doc(db, col, docSnap.id)));
+        count++;
+      });
+      await Promise.all(deletes);
+      results[col] = count;
+    }
 
     return NextResponse.json({
       success: true,
-      deleted,
-      message: `Se eliminaron ${deleted} recetas`,
+      deleted: results,
+      message: `Eliminados: ${results.recipes} recetas, ${results.weeklyPlans} planes, ${results.shoppingLists} listas`,
     });
   } catch (error: any) {
-    console.error("Error clearing recipes:", error?.message || error);
+    console.error("Error clearing data:", error?.message || error);
     return NextResponse.json(
-      { error: "Error al eliminar las recetas" },
+      { error: "Error al eliminar los datos" },
       { status: 500 }
     );
   }
