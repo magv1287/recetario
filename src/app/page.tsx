@@ -3,14 +3,14 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/components/AuthProvider";
-import { useWeeklyPlan, getWeekId, getNextWeekId } from "@/hooks/useWeeklyPlan";
+import { useWeeklyPlan, getWeekId, getNextWeekId, getWeekDates } from "@/hooks/useWeeklyPlan";
 import { WeeklyCalendar } from "@/components/WeeklyCalendar";
 import { WeekSelector } from "@/components/WeekSelector";
 import { PortionSelector } from "@/components/PortionSelector";
 import { DayOfWeek, MealType, CronStatus } from "@/lib/types";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Loader2, Sparkles, ChefHat } from "lucide-react";
+import { Loader2, Sparkles, ChefHat, Copy, RefreshCw } from "lucide-react";
 
 export default function CalendarPage() {
   const { user, loading: authLoading } = useAuthContext();
@@ -19,10 +19,12 @@ export default function CalendarPage() {
   const [weekId, setWeekId] = useState(() => getWeekId());
   const [portions, setPortions] = useState(2);
   const [generating, setGenerating] = useState(false);
+  const [copying, setCopying] = useState(false);
   const [error, setError] = useState("");
   const [cronRan, setCronRan] = useState(false);
+  const [prevWeekHasPlan, setPrevWeekHasPlan] = useState(false);
 
-  const { plan, recipes, loading: planLoading, toggleLock, clearMeal } = useWeeklyPlan(user?.uid, weekId);
+  const { plan, recipes, loading: planLoading, toggleLock, clearMeal, copyPlanToWeek } = useWeeklyPlan(user?.uid, weekId);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -32,6 +34,7 @@ export default function CalendarPage() {
 
   useEffect(() => {
     checkCronStatus();
+    checkPrevWeekPlan();
   }, [weekId]);
 
   const checkCronStatus = async () => {
@@ -48,6 +51,16 @@ export default function CalendarPage() {
     }
   };
 
+  const checkPrevWeekPlan = async () => {
+    try {
+      const prevId = getPrevWeekId(weekId);
+      const snap = await getDoc(doc(db, "weeklyPlans", prevId));
+      setPrevWeekHasPlan(snap.exists());
+    } catch {
+      setPrevWeekHasPlan(false);
+    }
+  };
+
   const navigateWeek = (direction: -1 | 1) => {
     const { start } = getWeekDatesFromId(weekId);
     start.setDate(start.getDate() + direction * 7);
@@ -55,7 +68,7 @@ export default function CalendarPage() {
   };
 
   const handleGenerate = async (regenerate = false) => {
-    if (!user) return;
+    if (!user || generating) return;
     setGenerating(true);
     setError("");
 
@@ -74,6 +87,47 @@ export default function CalendarPage() {
       setError(err.message || "Error al generar el plan semanal");
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleCopyToNextWeek = async () => {
+    if (!plan || copying) return;
+    setCopying(true);
+    setError("");
+    try {
+      const nextId = getNextWeekId(new Date(getWeekDates(weekId).start));
+      await copyPlanToWeek(nextId);
+      setWeekId(nextId);
+    } catch (err: any) {
+      setError(err.message || "Error al copiar el plan");
+    } finally {
+      setCopying(false);
+    }
+  };
+
+  const handleCopyFromPrevWeek = async () => {
+    if (copying) return;
+    setCopying(true);
+    setError("");
+    try {
+      const prevId = getPrevWeekId(weekId);
+      const snap = await getDoc(doc(db, "weeklyPlans", prevId));
+      if (!snap.exists()) throw new Error("No hay plan en la semana anterior");
+
+      const prevPlan = snap.data();
+      await import("firebase/firestore").then(async ({ setDoc, doc: docRef }) => {
+        await setDoc(doc(db, "weeklyPlans", weekId), {
+          userId: user!.uid,
+          portions: prevPlan.portions || portions,
+          status: "draft",
+          generatedAt: new Date(),
+          meals: prevPlan.meals,
+        });
+      });
+    } catch (err: any) {
+      setError(err.message || "Error al copiar el plan");
+    } finally {
+      setCopying(false);
     }
   };
 
@@ -99,13 +153,10 @@ export default function CalendarPage() {
 
   const isCurrentOrFuture = weekId >= getWeekId();
   const hasPlan = !!plan;
-  const canGenerate = isCurrentOrFuture && !generating;
-  const buttonDisabled = cronRan && hasPlan && !generating;
 
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-5 pb-28 lg:pb-8">
-        {/* Top bar: week nav + portions + actions */}
         <div className="flex flex-col gap-4 mb-6">
           {/* Row 1: Title + Week selector */}
           <div className="flex items-center justify-between">
@@ -117,34 +168,30 @@ export default function CalendarPage() {
             />
           </div>
 
-          {/* Row 2: Portions + Generate buttons */}
+          {/* Row 2: Portions + action buttons (only when plan exists) */}
           <div className="flex items-center justify-between">
             <PortionSelector value={portions} onChange={setPortions} />
 
-            <div className="flex items-center gap-2">
-              {hasPlan && isCurrentOrFuture && (
+            {hasPlan && isCurrentOrFuture && (
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleGenerate(true)}
                   disabled={generating}
-                  className="px-3.5 py-2 border border-[var(--border)] rounded-xl text-[13px] font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1.5 px-3.5 py-2 border border-[var(--border)] rounded-xl text-[13px] font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors disabled:opacity-50"
                 >
+                  {generating ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />}
                   Regenerar
                 </button>
-              )}
-              <button
-                onClick={() => handleGenerate(false)}
-                disabled={!canGenerate || (buttonDisabled && !generating)}
-                className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] rounded-xl text-[13px] font-bold text-black hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-40"
-              >
-                {generating ? (
-                  <><Loader2 className="animate-spin" size={15} />Generando...</>
-                ) : cronRan && hasPlan ? (
-                  <><Sparkles size={15} />Ya generado</>
-                ) : (
-                  <><Sparkles size={15} />Generar Plan</>
-                )}
-              </button>
-            </div>
+                <button
+                  onClick={handleCopyToNextWeek}
+                  disabled={copying}
+                  className="flex items-center gap-1.5 px-3.5 py-2 border border-[var(--border)] rounded-xl text-[13px] font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors disabled:opacity-50"
+                >
+                  {copying ? <Loader2 className="animate-spin" size={14} /> : <Copy size={14} />}
+                  Copiar a siguiente
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -159,24 +206,39 @@ export default function CalendarPage() {
             <Loader2 className="animate-spin text-[var(--accent)]" size={32} />
           </div>
         ) : !hasPlan ? (
-          <div className="text-center py-24 border-2 border-dashed border-[var(--border)] rounded-2xl">
+          <div className="text-center py-20 border-2 border-dashed border-[var(--border)] rounded-2xl">
             <ChefHat className="text-[var(--border-light)] mx-auto mb-4" size={48} />
             <p className="text-[var(--muted)] text-base mb-2 font-medium">No hay plan para esta semana</p>
             <p className="text-[var(--muted-dark)] text-sm mb-6 max-w-xs mx-auto">
-              Genera tu plan semanal con recetas anti-inflamatorias, altas en proteina y bajas en carbohidratos
+              Genera un nuevo plan o copia el de la semana anterior
             </p>
             {isCurrentOrFuture && (
-              <button
-                onClick={() => handleGenerate(false)}
-                disabled={generating}
-                className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-black font-bold px-6 py-3 rounded-xl text-sm transition-colors disabled:opacity-50"
-              >
-                {generating ? (
-                  <><Loader2 className="animate-spin" size={16} />Generando plan...</>
-                ) : (
-                  <><Sparkles size={16} />Generar Plan Semanal</>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button
+                  onClick={() => handleGenerate(false)}
+                  disabled={generating || copying}
+                  className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-black font-bold px-6 py-3 rounded-xl text-sm transition-colors disabled:opacity-50"
+                >
+                  {generating ? (
+                    <><Loader2 className="animate-spin" size={16} />Generando...</>
+                  ) : (
+                    <><Sparkles size={16} />Generar Plan</>
+                  )}
+                </button>
+                {prevWeekHasPlan && (
+                  <button
+                    onClick={handleCopyFromPrevWeek}
+                    disabled={generating || copying}
+                    className="inline-flex items-center gap-2 border border-[var(--border)] hover:border-[var(--border-light)] text-[var(--muted)] hover:text-[var(--foreground)] font-medium px-5 py-3 rounded-xl text-sm transition-colors disabled:opacity-50"
+                  >
+                    {copying ? (
+                      <><Loader2 className="animate-spin" size={16} />Copiando...</>
+                    ) : (
+                      <><Copy size={16} />Copiar semana anterior</>
+                    )}
+                  </button>
                 )}
-              </button>
+              </div>
             )}
           </div>
         ) : (
@@ -205,4 +267,10 @@ function getWeekDatesFromId(weekId: string): { start: Date; end: Date } {
   const end = new Date(start);
   end.setDate(start.getDate() + 6);
   return { start, end };
+}
+
+function getPrevWeekId(weekId: string): string {
+  const { start } = getWeekDatesFromId(weekId);
+  start.setDate(start.getDate() - 7);
+  return getWeekId(start);
 }

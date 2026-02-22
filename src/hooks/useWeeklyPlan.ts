@@ -158,5 +158,24 @@ export function useWeeklyPlan(userId: string | undefined, weekId: string) {
     [plan, userId, weekId]
   );
 
-  return { plan, recipes, loading, toggleLock, clearMeal };
+  const copyPlanToWeek = useCallback(
+    async (targetWeekId: string) => {
+      if (!plan || !userId) return;
+
+      const targetRef = doc(db, "weeklyPlans", targetWeekId);
+      const existing = await getDoc(targetRef);
+      if (existing.exists()) return;
+
+      await setDoc(targetRef, {
+        userId,
+        portions: plan.portions,
+        status: "draft",
+        generatedAt: new Date(),
+        meals: plan.meals,
+      });
+    },
+    [plan, userId]
+  );
+
+  return { plan, recipes, loading, toggleLock, clearMeal, copyPlanToWeek };
 }
