@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { adminDb } from "@/lib/firebase-admin";
 import { syncToBring } from "@/lib/bring";
 import { ShoppingList } from "@/lib/types";
 
@@ -14,8 +13,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "weekId requerido" }, { status: 400 });
     }
 
-    const listSnap = await getDoc(doc(db, "shoppingLists", weekId));
-    if (!listSnap.exists()) {
+    const listSnap = await adminDb.collection("shoppingLists").doc(weekId).get();
+    if (!listSnap.exists) {
       return NextResponse.json({ error: "Lista de compras no encontrada" }, { status: 404 });
     }
 
@@ -30,7 +29,7 @@ export async function POST(req: Request) {
     const listName = `Semana ${weekId}`;
     const bringListId = await syncToBring(uncheckedItems, listName);
 
-    await updateDoc(doc(db, "shoppingLists", weekId), {
+    await adminDb.collection("shoppingLists").doc(weekId).update({
       syncedToBring: true,
       bringListId,
     });

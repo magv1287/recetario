@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { doc, getDoc, updateDoc, addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { adminDb } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { getRecipeModel, parseGeminiJson } from "@/lib/gemini";
 import { getSwapRecipePrompt } from "@/lib/prompts";
 import { WeeklyPlan, DayOfWeek, MealType, DAYS_OF_WEEK } from "@/lib/types";
@@ -17,8 +17,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Faltan parametros requeridos" }, { status: 400 });
     }
 
-    const planSnap = await getDoc(doc(db, "weeklyPlans", weekId));
-    if (!planSnap.exists()) {
+    const planSnap = await adminDb.collection("weeklyPlans").doc(weekId).get();
+    if (!planSnap.exists) {
       return NextResponse.json({ error: "Plan no encontrado" }, { status: 404 });
     }
 
@@ -30,9 +30,9 @@ export async function POST(req: Request) {
         const slot = plan.meals?.[d]?.[m];
         if (slot?.recipeId) {
           try {
-            const recipeSnap = await getDoc(doc(db, "recipes", slot.recipeId));
-            if (recipeSnap.exists()) {
-              existingTitles.push(recipeSnap.data().title);
+            const recipeSnap = await adminDb.collection("recipes").doc(slot.recipeId).get();
+            if (recipeSnap.exists) {
+              existingTitles.push(recipeSnap.data()!.title);
             }
           } catch {
             // skip
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const recipeDoc = await addDoc(collection(db, "recipes"), {
+    const recipeRef = await adminDb.collection("recipes").add({
       title: recipeData.title || "Sin titulo",
       description: recipeData.description || "",
       category: recipeData.category || "Otros",
@@ -75,21 +75,17 @@ export async function POST(req: Request) {
       mealType: meal,
       macros: recipeData.macros || null,
       userId: plan.userId,
-      createdAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
     });
 
-    const updatedMeals = { ...plan.meals };
-    if (!updatedMeals[day as DayOfWeek]) {
-      updatedMeals[day as DayOfWeek] = {} as any;
-    }
-    (updatedMeals[day as DayOfWeek] as any)[meal] = {
-      recipeId: recipeDoc.id,
-      locked: false,
-    };
+    await adminDb.collection("weeklyPlans").doc(weekId).update({
+      [`meals.${day}.${meal}`]: {
+        recipeId: recipeRef.id,
+        locked: false,
+      },
+    });
 
-    await updateDoc(doc(db, "weeklyPlans", weekId), { meals: updatedMeals });
-
-    return NextResponse.json({ success: true, recipeId: recipeDoc.id });
+    return NextResponse.json({ success: true, recipeId: recipeRef.id });
   } catch (error: any) {
     console.error("Error swapping recipe:", error?.message || error);
 

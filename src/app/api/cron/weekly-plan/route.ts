@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { doc, getDoc, setDoc, serverTimestamp, collection, getDocs, query, where, addDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { adminDb } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { getRecipeModel, getGeminiModel, parseGeminiJson } from "@/lib/gemini";
 import { getWeeklyPlanPrompt, getShoppingListPrompt } from "@/lib/prompts";
 import { syncToBring } from "@/lib/bring";
@@ -32,24 +32,24 @@ export async function GET(req: Request) {
 
     const weekId = getNextWeekId();
 
-    const existingPlan = await getDoc(doc(db, "weeklyPlans", weekId));
-    if (existingPlan.exists()) {
-      await setDoc(doc(db, "config", "cronStatus"), {
-        lastRun: serverTimestamp(),
+    const existingPlan = await adminDb.collection("weeklyPlans").doc(weekId).get();
+    if (existingPlan.exists) {
+      await adminDb.collection("config").doc("cronStatus").set({
+        lastRun: FieldValue.serverTimestamp(),
         weekId,
         success: true,
       });
       return NextResponse.json({ message: "Plan already exists", weekId });
     }
 
-    const accessSnap = await getDoc(doc(db, "config", "access"));
-    if (!accessSnap.exists()) {
+    const accessSnap = await adminDb.collection("config").doc("access").get();
+    if (!accessSnap.exists) {
       return NextResponse.json({ error: "No access config found" }, { status: 500 });
     }
 
     let adminUserId = "";
     try {
-      const prefsSnap = await getDocs(collection(db, "userPrefs"));
+      const prefsSnap = await adminDb.collection("userPrefs").get();
       prefsSnap.forEach((d) => {
         if (!adminUserId) adminUserId = d.id;
       });
@@ -58,7 +58,7 @@ export async function GET(req: Request) {
     }
 
     if (!adminUserId) {
-      const recipesSnap = await getDocs(query(collection(db, "recipes"), where("source", "==", "ai")));
+      const recipesSnap = await adminDb.collection("recipes").where("source", "==", "ai").get();
       recipesSnap.forEach((d) => {
         if (!adminUserId) adminUserId = d.data().userId;
       });
@@ -72,9 +72,7 @@ export async function GET(req: Request) {
 
     const existingTitles: string[] = [];
     try {
-      const recipesSnap = await getDocs(
-        query(collection(db, "recipes"), where("source", "==", "ai"))
-      );
+      const recipesSnap = await adminDb.collection("recipes").where("source", "==", "ai").get();
       recipesSnap.forEach((d) => {
         const title = d.data().title;
         if (title) existingTitles.push(title);
@@ -102,7 +100,7 @@ export async function GET(req: Request) {
         const recipeData = planData.meals[day]?.[meal];
         if (!recipeData) continue;
 
-        const recipeDoc = await addDoc(collection(db, "recipes"), {
+        const recipeRef = await adminDb.collection("recipes").add({
           title: recipeData.title || "Sin titulo",
           description: recipeData.description || "",
           category: recipeData.category || "Otros",
@@ -114,11 +112,11 @@ export async function GET(req: Request) {
           mealType: meal,
           macros: recipeData.macros || null,
           userId: adminUserId,
-          createdAt: serverTimestamp(),
+          createdAt: FieldValue.serverTimestamp(),
         });
 
         planMeals[day][meal] = {
-          recipeId: recipeDoc.id,
+          recipeId: recipeRef.id,
           locked: false,
         };
 
@@ -126,15 +124,14 @@ export async function GET(req: Request) {
       }
     }
 
-    await setDoc(doc(db, "weeklyPlans", weekId), {
+    await adminDb.collection("weeklyPlans").doc(weekId).set({
       userId: adminUserId,
       portions,
       status: "draft",
-      generatedAt: serverTimestamp(),
+      generatedAt: FieldValue.serverTimestamp(),
       meals: planMeals,
     });
 
-    // Generate shopping list (separate lighter AI call)
     if (allIngredients.length > 0) {
       try {
         const listModel = getGeminiModel();
@@ -149,17 +146,17 @@ export async function GET(req: Request) {
           checked: false,
         }));
 
-        await setDoc(doc(db, "shoppingLists", weekId), {
+        await adminDb.collection("shoppingLists").doc(weekId).set({
           userId: adminUserId,
           items,
           syncedToBring: false,
-          generatedAt: serverTimestamp(),
+          generatedAt: FieldValue.serverTimestamp(),
         });
 
         try {
           const listName = `Semana ${weekId}`;
           const bringListId = await syncToBring(items, listName);
-          await setDoc(doc(db, "shoppingLists", weekId), {
+          await adminDb.collection("shoppingLists").doc(weekId).set({
             syncedToBring: true,
             bringListId,
           }, { merge: true });
@@ -171,8 +168,8 @@ export async function GET(req: Request) {
       }
     }
 
-    await setDoc(doc(db, "config", "cronStatus"), {
-      lastRun: serverTimestamp(),
+    await adminDb.collection("config").doc("cronStatus").set({
+      lastRun: FieldValue.serverTimestamp(),
       weekId,
       success: true,
     });
@@ -186,8 +183,8 @@ export async function GET(req: Request) {
     console.error("Cron error:", error?.message || error);
 
     try {
-      await setDoc(doc(db, "config", "cronStatus"), {
-        lastRun: serverTimestamp(),
+      await adminDb.collection("config").doc("cronStatus").set({
+        lastRun: FieldValue.serverTimestamp(),
         weekId: getNextWeekId(),
         success: false,
       });

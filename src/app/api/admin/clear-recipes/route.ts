@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { adminDb } from "@/lib/firebase-admin";
 
 export const maxDuration = 60;
 
@@ -19,14 +18,14 @@ export async function POST(req: Request) {
     const results: Record<string, number> = {};
 
     for (const col of collections) {
-      const snap = await getDocs(collection(db, col));
+      const snap = await adminDb.collection(col).get();
       let count = 0;
-      const deletes: Promise<void>[] = [];
+      const batch = adminDb.batch();
       snap.forEach((docSnap) => {
-        deletes.push(deleteDoc(doc(db, col, docSnap.id)));
+        batch.delete(docSnap.ref);
         count++;
       });
-      await Promise.all(deletes);
+      if (count > 0) await batch.commit();
       results[col] = count;
     }
 

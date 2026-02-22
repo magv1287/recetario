@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { adminDb } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { getGeminiModel, parseGeminiJson } from "@/lib/gemini";
 import { getShoppingListPrompt } from "@/lib/prompts";
 import { WeeklyPlan, DAYS_OF_WEEK, MealType } from "@/lib/types";
@@ -17,8 +17,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "weekId requerido" }, { status: 400 });
     }
 
-    const planSnap = await getDoc(doc(db, "weeklyPlans", weekId));
-    if (!planSnap.exists()) {
+    const planSnap = await adminDb.collection("weeklyPlans").doc(weekId).get();
+    if (!planSnap.exists) {
       return NextResponse.json({ error: "Plan no encontrado" }, { status: 404 });
     }
 
@@ -32,9 +32,9 @@ export async function POST(req: Request) {
         if (!slot?.recipeId) continue;
 
         try {
-          const recipeSnap = await getDoc(doc(db, "recipes", slot.recipeId));
-          if (recipeSnap.exists()) {
-            const ingredients = recipeSnap.data().ingredients || [];
+          const recipeSnap = await adminDb.collection("recipes").doc(slot.recipeId).get();
+          if (recipeSnap.exists) {
+            const ingredients = recipeSnap.data()!.ingredients || [];
             allIngredients.push(...ingredients);
           }
         } catch {
@@ -70,11 +70,11 @@ export async function POST(req: Request) {
       checked: false,
     }));
 
-    await setDoc(doc(db, "shoppingLists", weekId), {
+    await adminDb.collection("shoppingLists").doc(weekId).set({
       userId: plan.userId,
       items,
       syncedToBring: false,
-      generatedAt: serverTimestamp(),
+      generatedAt: FieldValue.serverTimestamp(),
     });
 
     return NextResponse.json({ success: true, itemCount: items.length });

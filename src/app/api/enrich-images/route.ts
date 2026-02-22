@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { adminDb } from "@/lib/firebase-admin";
 import { searchFoodImage } from "@/lib/images";
 
 export const maxDuration = 30;
@@ -21,10 +20,10 @@ export async function POST(req: Request) {
     await Promise.all(
       batch.map(async (id: string) => {
         try {
-          const snap = await getDoc(doc(db, "recipes", id));
-          if (!snap.exists()) return;
+          const snap = await adminDb.collection("recipes").doc(id).get();
+          if (!snap.exists) return;
 
-          const data = snap.data();
+          const data = snap.data()!;
           if (data.imageUrl) {
             results[id] = data.imageUrl;
             return;
@@ -32,7 +31,7 @@ export async function POST(req: Request) {
 
           const imageUrl = await searchFoodImage(data.title || data.category || "food");
           if (imageUrl) {
-            await updateDoc(doc(db, "recipes", id), { imageUrl });
+            await adminDb.collection("recipes").doc(id).update({ imageUrl });
             results[id] = imageUrl;
           }
         } catch (err: any) {

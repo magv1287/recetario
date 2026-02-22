@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { collection, doc, setDoc, addDoc, serverTimestamp, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { adminDb } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { getRecipeModel, parseGeminiJson } from "@/lib/gemini";
 import { getWeeklyPlanPrompt } from "@/lib/prompts";
-import { DayOfWeek, MealType, DAYS_OF_WEEK } from "@/lib/types";
+import { MealType, DAYS_OF_WEEK } from "@/lib/types";
 
 export const maxDuration = 60;
 
@@ -22,9 +22,7 @@ export async function POST(req: Request) {
     const existingTitles: string[] = [];
     if (!regenerate) {
       try {
-        const recipesSnap = await getDocs(
-          query(collection(db, "recipes"), where("source", "==", "ai"))
-        );
+        const recipesSnap = await adminDb.collection("recipes").where("source", "==", "ai").get();
         recipesSnap.forEach((d) => {
           const title = d.data().title;
           if (title) existingTitles.push(title);
@@ -68,7 +66,7 @@ export async function POST(req: Request) {
         const recipeData = data.meals[day]?.[meal];
         if (!recipeData) continue;
 
-        const recipeDoc = await addDoc(collection(db, "recipes"), {
+        const recipeRef = await adminDb.collection("recipes").add({
           title: recipeData.title || "Sin titulo",
           description: recipeData.description || "",
           category: recipeData.category || "Otros",
@@ -80,23 +78,23 @@ export async function POST(req: Request) {
           mealType: meal,
           macros: recipeData.macros || null,
           userId,
-          createdAt: serverTimestamp(),
+          createdAt: FieldValue.serverTimestamp(),
         });
 
-        createdRecipeIds.push(recipeDoc.id);
+        createdRecipeIds.push(recipeRef.id);
 
         planMeals[day][meal] = {
-          recipeId: recipeDoc.id,
+          recipeId: recipeRef.id,
           locked: false,
         };
       }
     }
 
-    await setDoc(doc(db, "weeklyPlans", weekId), {
+    await adminDb.collection("weeklyPlans").doc(weekId).set({
       userId,
       portions: portionCount,
       status: "draft",
-      generatedAt: serverTimestamp(),
+      generatedAt: FieldValue.serverTimestamp(),
       meals: planMeals,
     });
 
