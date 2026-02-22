@@ -167,11 +167,11 @@ export default function RecipeDetailPage({
       <div className="hidden lg:block border-b border-[var(--border)]">
         <div className="max-w-5xl mx-auto px-8 py-3 flex items-center justify-between">
           <button
-            onClick={() => router.push("/recipes")}
+            onClick={() => router.back()}
             className="flex items-center gap-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors text-sm font-medium"
           >
             <ArrowLeft size={18} />
-            Volver al recetario
+            Volver
           </button>
           <div className="flex items-center gap-2">
             <button
@@ -221,7 +221,7 @@ export default function RecipeDetailPage({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-[var(--background)]/20" />
         <button
-          onClick={() => router.push("/recipes")}
+          onClick={() => router.back()}
           className="absolute top-4 left-4 bg-black/40 backdrop-blur-sm p-2.5 rounded-xl z-10"
         >
           <ArrowLeft size={20} />
