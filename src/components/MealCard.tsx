@@ -1,7 +1,7 @@
 "use client";
 
 import { Recipe, MealType, MEAL_LABELS } from "@/lib/types";
-import { Lock, Unlock, RefreshCw, ChefHat, Flame, Wheat, Drumstick } from "lucide-react";
+import { Lock, Unlock, RefreshCw, ChefHat, Flame, Wheat, Drumstick, Pizza, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface MealCardProps {
@@ -11,6 +11,9 @@ interface MealCardProps {
   onToggleLock: () => void;
   onSwap: () => void;
   compact?: boolean;
+  isPast?: boolean;
+  isCheatMeal?: boolean;
+  onClear?: () => void;
 }
 
 const mealColors: Record<MealType, string> = {
@@ -31,12 +34,25 @@ const mealBorderColors: Record<MealType, string> = {
   dinner: "border-purple-400/20",
 };
 
-export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compact }: MealCardProps) {
+export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compact, isPast, isCheatMeal, onClear }: MealCardProps) {
   const router = useRouter();
+  const pastClass = isPast ? "opacity-40 saturate-[0.3]" : "";
+
+  if (isCheatMeal) {
+    return (
+      <div className={`bg-[var(--card)] border border-dashed border-amber-400/30 rounded-2xl ${compact ? "p-4" : "p-5"} flex items-center justify-center min-h-[80px] ${pastClass}`}>
+        <div className="text-center">
+          <Pizza size={compact ? 22 : 28} className="text-amber-400 mx-auto mb-1.5" />
+          <p className={`${compact ? "text-[12px]" : "text-[14px]"} font-bold text-amber-400`}>Cheat Meal</p>
+          <p className={`${compact ? "text-[10px]" : "text-[11px]"} text-[var(--muted-dark)] mt-0.5`}>Disfruten!</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!recipe) {
     return (
-      <div className={`bg-[var(--card)] border border-dashed border-[var(--border-light)] rounded-2xl ${compact ? "p-4" : "p-5"} flex items-center justify-center min-h-[80px]`}>
+      <div className={`bg-[var(--card)] border border-dashed border-[var(--border-light)] rounded-2xl ${compact ? "p-4" : "p-5"} flex items-center justify-center min-h-[80px] ${pastClass}`}>
         <div className="text-center">
           <ChefHat size={compact ? 18 : 22} className="text-[var(--border-light)] mx-auto mb-1.5" />
           <p className="text-[12px] text-[var(--muted-dark)] font-medium">{MEAL_LABELS[mealType]}</p>
@@ -47,7 +63,7 @@ export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compa
 
   if (compact) {
     return (
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[var(--border-light)] transition-all group">
+      <div className={`bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[var(--border-light)] transition-all group ${pastClass}`}>
         <div className={`flex items-center justify-between px-3 py-1.5 ${mealBgColors[mealType]} border-b ${mealBorderColors[mealType]}`}>
           <span className={`text-[11px] font-bold uppercase tracking-wide ${mealColors[mealType]}`}>{MEAL_LABELS[mealType]}</span>
           <div className="flex items-center gap-0.5">
@@ -57,13 +73,18 @@ export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compa
             <button onClick={(e) => { e.stopPropagation(); onSwap(); }} className="p-1 rounded text-[var(--muted-dark)] hover:text-[var(--accent)] transition-colors" title="Cambiar receta">
               <RefreshCw size={11} />
             </button>
+            {onClear && (
+              <button onClick={(e) => { e.stopPropagation(); onClear(); }} className="p-1 rounded text-[var(--muted-dark)] hover:text-amber-400 transition-colors" title="Cheat Meal">
+                <Pizza size={11} />
+              </button>
+            )}
           </div>
         </div>
 
         <button onClick={() => router.push(`/recipe/${recipe.id}`)} className="w-full text-left active:bg-[var(--card-hover)] transition-colors">
           {recipe.imageUrl && (
             <div className="w-full aspect-[16/9] overflow-hidden">
-              <img src={recipe.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+              <img src={recipe.imageUrl} alt="" className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${isPast ? "grayscale" : ""}`} loading="lazy" />
             </div>
           )}
           <div className="p-3">
@@ -84,7 +105,7 @@ export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compa
   }
 
   return (
-    <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[var(--border-light)] transition-all group">
+    <div className={`bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[var(--border-light)] transition-all group ${pastClass}`}>
       <div className={`flex items-center justify-between px-4 py-2 ${mealBgColors[mealType]} border-b ${mealBorderColors[mealType]}`}>
         <span className={`text-[12px] font-bold uppercase tracking-wide ${mealColors[mealType]}`}>{MEAL_LABELS[mealType]}</span>
         <div className="flex items-center gap-1">
@@ -94,13 +115,18 @@ export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compa
           <button onClick={(e) => { e.stopPropagation(); onSwap(); }} className="p-1.5 rounded-lg text-[var(--muted-dark)] hover:text-[var(--accent)] hover:bg-[var(--accent-soft)] transition-colors" title="Cambiar receta">
             <RefreshCw size={14} />
           </button>
+          {onClear && (
+            <button onClick={(e) => { e.stopPropagation(); onClear(); }} className="p-1.5 rounded-lg text-[var(--muted-dark)] hover:text-amber-400 hover:bg-amber-400/10 transition-colors" title="Cheat Meal">
+              <Pizza size={14} />
+            </button>
+          )}
         </div>
       </div>
 
       <button onClick={() => router.push(`/recipe/${recipe.id}`)} className="w-full text-left active:bg-[var(--card-hover)] transition-colors">
         {recipe.imageUrl && (
           <div className="w-full aspect-[2/1] overflow-hidden">
-            <img src={recipe.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+            <img src={recipe.imageUrl} alt="" className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${isPast ? "grayscale" : ""}`} loading="lazy" />
           </div>
         )}
         <div className="p-4">

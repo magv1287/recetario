@@ -22,7 +22,7 @@ export default function CalendarPage() {
   const [error, setError] = useState("");
   const [cronRan, setCronRan] = useState(false);
 
-  const { plan, recipes, loading: planLoading, toggleLock } = useWeeklyPlan(user?.uid, weekId);
+  const { plan, recipes, loading: planLoading, toggleLock, clearMeal } = useWeeklyPlan(user?.uid, weekId);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -80,6 +80,11 @@ export default function CalendarPage() {
   const handleToggleLock = useCallback(
     (day: DayOfWeek, meal: MealType) => { toggleLock(day, meal); },
     [toggleLock]
+  );
+
+  const handleClearMeal = useCallback(
+    (day: DayOfWeek, meal: MealType) => { clearMeal(day, meal); },
+    [clearMeal]
   );
 
   const handlePlanUpdated = useCallback(() => {}, []);
@@ -180,6 +185,7 @@ export default function CalendarPage() {
             recipes={recipes}
             weekId={weekId}
             onToggleLock={handleToggleLock}
+            onClearMeal={handleClearMeal}
             onPlanUpdated={handlePlanUpdated}
           />
         )}

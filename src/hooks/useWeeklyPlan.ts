@@ -143,5 +143,20 @@ export function useWeeklyPlan(userId: string | undefined, weekId: string) {
     [plan, userId, weekId]
   );
 
-  return { plan, recipes, loading, toggleLock };
+  const clearMeal = useCallback(
+    async (day: DayOfWeek, meal: MealType) => {
+      if (!plan || !userId) return;
+
+      const updatedMeals = { ...plan.meals };
+      const dayMeals = { ...updatedMeals[day] };
+      dayMeals[meal] = { recipeId: "", locked: true };
+      updatedMeals[day] = dayMeals;
+
+      const docRef = doc(db, "weeklyPlans", weekId);
+      await setDoc(docRef, { ...plan, meals: updatedMeals }, { merge: true });
+    },
+    [plan, userId, weekId]
+  );
+
+  return { plan, recipes, loading, toggleLock, clearMeal };
 }

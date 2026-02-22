@@ -25,19 +25,13 @@ export async function syncToBring(items: ShoppingItem[], listName: string): Prom
   const bring = await getBring();
 
   const lists = await bring.loadLists();
-  let targetList = lists.lists?.find(
-    (l: any) => l.name === listName
-  );
+  const allLists = lists.lists || [];
 
-  if (!targetList) {
-    const allLists = lists.lists || [];
-    if (allLists.length > 0) {
-      targetList = allLists[0];
-    } else {
-      throw new Error("No se encontro ninguna lista en Bring!. Crea una lista primero en la app.");
-    }
+  if (allLists.length === 0) {
+    throw new Error("No se encontró ninguna lista en Bring!. Crea una lista primero en la app.");
   }
 
+  const targetList = allLists[0];
   const listUuid = targetList.listUuid;
 
   const currentItems = await bring.getItems(listUuid);
@@ -46,9 +40,15 @@ export async function syncToBring(items: ShoppingItem[], listName: string): Prom
       try {
         await bring.removeItem(listUuid, existingItem.name);
       } catch {
-        // skip if can't remove
+        // skip
       }
     }
+  }
+
+  try {
+    await bring.saveItem(listUuid, `🗓️ ${listName}`, "---");
+  } catch {
+    // non-critical
   }
 
   for (const item of items) {
