@@ -4,7 +4,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export function getGeminiModel() {
   return genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.5-flash-lite",
     generationConfig: {
       maxOutputTokens: 16384,
       temperature: 0.3,
@@ -14,7 +14,7 @@ export function getGeminiModel() {
 
 export function getRecipeModel() {
   return genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.5-flash-lite",
     generationConfig: {
       maxOutputTokens: 16384,
       temperature: 0.8,
