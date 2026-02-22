@@ -26,7 +26,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No hay items pendientes para enviar" }, { status: 400 });
     }
 
-    const listName = `Semana ${weekId}`;
+    const weekNum = weekId.split("-W")[1]?.replace(/^0/, "") || weekId;
+    const listName = `Semana ${weekNum}`;
     const bringListId = await syncToBring(uncheckedItems, listName);
 
     await adminDb.collection("shoppingLists").doc(weekId).update({

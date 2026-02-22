@@ -154,7 +154,8 @@ export async function GET(req: Request) {
         });
 
         try {
-          const listName = `Semana ${weekId}`;
+          const weekNum = weekId.split("-W")[1]?.replace(/^0/, "") || weekId;
+          const listName = `Semana ${weekNum}`;
           const bringListId = await syncToBring(items, listName);
           await adminDb.collection("shoppingLists").doc(weekId).set({
             syncedToBring: true,
