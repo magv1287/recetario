@@ -10,6 +10,7 @@ import { PortionSelector } from "@/components/PortionSelector";
 import { DayOfWeek, MealType, CronStatus } from "@/lib/types";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { isAdmin } from "@/lib/access-control";
 import { Loader2, Sparkles, ChefHat, Copy, RefreshCw } from "lucide-react";
 
 export default function CalendarPage() {
@@ -23,12 +24,16 @@ export default function CalendarPage() {
   const [error, setError] = useState("");
   const [cronRan, setCronRan] = useState(false);
   const [prevWeekHasPlan, setPrevWeekHasPlan] = useState(false);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
 
   const { plan, recipes, loading: planLoading, toggleLock, clearMeal, copyPlanToWeek } = useWeeklyPlan(user?.uid, weekId);
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login");
+    }
+    if (user?.email) {
+      isAdmin(user.email).then(setUserIsAdmin);
     }
   }, [user, authLoading, router]);
 
@@ -172,7 +177,7 @@ export default function CalendarPage() {
           <div className="flex items-center justify-between">
             <PortionSelector value={portions} onChange={setPortions} />
 
-            {hasPlan && isCurrentOrFuture && (
+            {hasPlan && isCurrentOrFuture && userIsAdmin && (
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleGenerate(true)}
@@ -212,7 +217,7 @@ export default function CalendarPage() {
             <p className="text-[var(--muted-dark)] text-sm mb-6 max-w-xs mx-auto">
               Genera un nuevo plan o copia el de la semana anterior
             </p>
-            {isCurrentOrFuture && (
+            {isCurrentOrFuture && userIsAdmin && (
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
                   onClick={() => handleGenerate(false)}

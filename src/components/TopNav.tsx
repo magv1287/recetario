@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthContext } from "@/components/AuthProvider";
-import { CalendarDays, BookOpen, ShoppingCart, LogOut, ChefHat } from "lucide-react";
+import { AccessManager } from "@/components/AccessManager";
+import { CalendarDays, BookOpen, ShoppingCart, LogOut, ChefHat, Users } from "lucide-react";
 
 const tabs = [
   { href: "/", label: "Calendario", icon: CalendarDays },
@@ -21,12 +23,15 @@ export function TopNav() {
     return pathname.startsWith(href);
   };
 
+  const [showAccess, setShowAccess] = useState(false);
+
   const handleSignOut = async () => {
     await signOut();
     router.push("/login");
   };
 
   return (
+    <>
     <header className="sticky top-0 z-50 bg-[var(--background)]/90 backdrop-blur-xl border-b border-[var(--border)] safe-top hidden lg:block">
       <div className="max-w-7xl mx-auto px-8 h-14 flex items-center justify-between">
         <div className="flex items-center gap-10">
@@ -68,6 +73,13 @@ export function TopNav() {
             {user?.displayName || user?.email}
           </span>
           <button
+            onClick={() => setShowAccess(true)}
+            className="text-[var(--muted-dark)] hover:text-[var(--muted)] p-2 rounded-lg hover:bg-[var(--card)] transition-colors"
+            title="Gestionar acceso"
+          >
+            <Users size={18} />
+          </button>
+          <button
             onClick={handleSignOut}
             className="text-[var(--muted-dark)] hover:text-[var(--muted)] p-2 rounded-lg hover:bg-[var(--card)] transition-colors"
             title="Cerrar sesion"
@@ -77,5 +89,9 @@ export function TopNav() {
         </div>
       </div>
     </header>
+    {showAccess && user?.email && (
+      <AccessManager userEmail={user.email} onClose={() => setShowAccess(false)} />
+    )}
+    </>
   );
 }
