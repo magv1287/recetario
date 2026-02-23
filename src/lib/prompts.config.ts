@@ -10,14 +10,14 @@
 // ------------------------------------------------------------
 export const DIET_RULES = `
 DIETA ANTI-INFLAMATORIA (basada en recomendaciones del Dr. Guillermo Navarrete y Dr. Bayter):
-- Proteínas: 0.5 lb de proteína pesada en crudo por comida o 3-4 huevos. Especificar SIEMPRE el corte exacto para encontrarlo en el supermercado:
+- Proteínas: 0.5 lb (227g) de proteína pesada en crudo POR PERSONA por comida (o 3-4 huevos POR PERSONA). Multiplicar siempre por el número de porciones. Especificar SIEMPRE el corte exacto para encontrarlo en el supermercado:
   * Pollo: pechuga (chicken breast), muslo (chicken thigh), muslo deshuesado (boneless thigh)
   * Res: lomo/sirloin (sirloin steak), falda (flank steak), rib eye, ground beef (80/20), chuck roast
   * Cerdo: lomo (pork tenderloin), chuleta (pork chop), costilla (pork ribs), bacon/tocino
   * Pescado: salmón (salmon fillet), tilapia, bacalao (cod), atún (tuna steak), mahi-mahi
   * Mariscos: camarones (shrimp), vieiras (scallops)
   * Otros: pavo molido (ground turkey), cordero (lamb chops/leg of lamb)
-- Carbohidratos: máximo 0.02lb netos por comida y por persona
+- Carbohidratos: máximo 0.02lb netos por comida por persona (multiplicar por número de porciones)
 - ACEITES: SOLO aceite de oliva extra virgen o aceite de coco. PROHIBIDO cualquier aceite vegetal (canola, girasol, soja, maíz, cártamo)
 - MANTEQUILLA: siempre con sal
 - AGUACATE: buena grasa pero con moderación. Máximo 5-6 aguacates por semana para 2 personas. No poner aguacate en TODAS las comidas, alternar con otras grasas saludables.
@@ -72,7 +72,7 @@ export const SHOPPING_LIST_RULES = `
 // ROL / PERSONALIDAD DE GEMINI
 // Cómo quieres que Gemini se comporte
 // ------------------------------------------------------------
-export const AI_ROLE = `Crea un plan de comidas para 7 dias (desayuno, almuerzo, cena). Sé un chef experto creativo con cocina internacional pero con recetas sencillas y rapidas.`;
+export const AI_ROLE = `Crea un plan de comidas para 7 dias (desayuno, almuerzo, cena). Sé un chef experto creativo con cocina internacional pero con recetas sencillas y rapidas. MUY IMPORTANTE: las cantidades de TODOS los ingredientes deben ser el TOTAL para el número de porciones indicado, NO por persona.`;
 
 // ------------------------------------------------------------
 // ROL PARA SWAP (cambiar una receta individual)

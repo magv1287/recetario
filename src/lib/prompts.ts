@@ -67,7 +67,8 @@ ${VARIETY_RULES}
 
 ${DIET_RULES}
 
-PORCIONES: ${portions}
+PORCIONES: ${portions} personas.
+IMPORTANTE: Todas las cantidades de ingredientes deben ser el TOTAL para ${portions} personas. La proteína debe ser ${portions} x 0.5 lb = ${(portions * 0.5).toFixed(1)} lb (${Math.round(portions * 227)}g) por comida en TOTAL. NO poner cantidades para 1 persona.
 
 ${COOKING_INSTRUCTIONS}${excludeClause}
 
@@ -90,7 +91,8 @@ export function getSwapRecipePrompt(
 
 ${DIET_RULES}
 ${fruitNote}
-PORCIONES: ${portions}
+PORCIONES: ${portions} personas.
+IMPORTANTE: Todas las cantidades deben ser el TOTAL para ${portions} personas. Proteína: ${(portions * 0.5).toFixed(1)} lb (${Math.round(portions * 227)}g) por comida en TOTAL.
 
 EVITAR (ser MUY diferente):
 ${allExcluded.slice(-15).map(t => `- ${t}`).join("\n")}
