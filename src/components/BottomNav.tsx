@@ -19,7 +19,10 @@ export function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#111113]/95 backdrop-blur-xl border-t border-[#1E1E22] lg:hidden safe-bottom-nav">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 bg-[#0f141b]/95 backdrop-blur-xl border-t border-[var(--border)] lg:hidden"
+      style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)" }}
+    >
       <div className="flex items-center justify-around px-2 pt-2 pb-1">
         {tabs.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
@@ -34,7 +37,7 @@ export function BottomNav() {
               }`}
             >
               <Icon size={22} strokeWidth={active ? 2.2 : 1.8} />
-              <span className="text-[11px] font-semibold tracking-wide">{label}</span>
+              <span className="text-[0.68rem] font-semibold tracking-wide">{label}</span>
             </Link>
           );
         })}

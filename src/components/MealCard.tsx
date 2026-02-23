@@ -1,7 +1,7 @@
 "use client";
 
 import { Recipe, MealType, MEAL_LABELS } from "@/lib/types";
-import { Lock, Unlock, RefreshCw, ChefHat, Flame, Wheat, Drumstick, Pizza, Trash2 } from "lucide-react";
+import { Lock, Unlock, RefreshCw, ChefHat, Flame, Wheat, Drumstick, Pizza } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface MealCardProps {
@@ -18,20 +18,20 @@ interface MealCardProps {
 
 const mealColors: Record<MealType, string> = {
   breakfast: "text-amber-400",
-  lunch: "text-[var(--sage)]",
-  dinner: "text-purple-400",
+  lunch: "text-emerald-400",
+  dinner: "text-violet-400",
 };
 
 const mealBgColors: Record<MealType, string> = {
   breakfast: "bg-amber-400/8",
-  lunch: "bg-[var(--sage-soft)]",
-  dinner: "bg-purple-400/8",
+  lunch: "bg-emerald-400/8",
+  dinner: "bg-violet-400/8",
 };
 
 const mealBorderColors: Record<MealType, string> = {
-  breakfast: "border-amber-400/20",
-  lunch: "border-[var(--sage)]/20",
-  dinner: "border-purple-400/20",
+  breakfast: "border-amber-400/15",
+  lunch: "border-emerald-400/15",
+  dinner: "border-violet-400/15",
 };
 
 export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compact, isPast, isCheatMeal, onClear }: MealCardProps) {
@@ -40,7 +40,7 @@ export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compa
 
   if (isCheatMeal) {
     return (
-      <div className={`bg-[var(--card)] border border-dashed border-amber-400/30 rounded-2xl ${compact ? "p-4" : "p-5"} flex items-center justify-center min-h-[80px] ${pastClass}`}>
+      <div className={`bg-[var(--card)] rounded-xl shadow-[var(--shadow-sm)] ${compact ? "p-4" : "p-5"} flex items-center justify-center min-h-[80px] ${pastClass}`}>
         <div className="text-center">
           <Pizza size={compact ? 22 : 28} className="text-amber-400 mx-auto mb-1.5" />
           <p className={`${compact ? "text-[12px]" : "text-[14px]"} font-bold text-amber-400`}>Cheat Meal</p>
@@ -52,9 +52,9 @@ export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compa
 
   if (!recipe) {
     return (
-      <div className={`bg-[var(--card)] border border-dashed border-[var(--border-light)] rounded-2xl ${compact ? "p-4" : "p-5"} flex items-center justify-center min-h-[80px] ${pastClass}`}>
+      <div className={`bg-[var(--card)] border border-dashed border-[var(--border)] rounded-xl ${compact ? "p-4" : "p-5"} flex items-center justify-center min-h-[80px] ${pastClass}`}>
         <div className="text-center">
-          <ChefHat size={compact ? 18 : 22} className="text-[var(--border-light)] mx-auto mb-1.5" />
+          <ChefHat size={compact ? 18 : 22} className="text-[var(--muted-dark)] mx-auto mb-1.5" />
           <p className="text-[12px] text-[var(--muted-dark)] font-medium">{MEAL_LABELS[mealType]}</p>
         </div>
       </div>
@@ -63,7 +63,7 @@ export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compa
 
   if (compact) {
     return (
-      <div className={`bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[var(--border-light)] transition-all group ${pastClass}`}>
+      <div className={`bg-[var(--card)] rounded-xl shadow-[var(--shadow-sm)] overflow-hidden hover:shadow-[var(--shadow)] transition-all group ${pastClass}`}>
         <div className={`flex items-center justify-between px-3 py-1.5 ${mealBgColors[mealType]} border-b ${mealBorderColors[mealType]}`}>
           <span className={`text-[11px] font-bold uppercase tracking-wide ${mealColors[mealType]}`}>{MEAL_LABELS[mealType]}</span>
           <div className="flex items-center gap-0.5">
@@ -105,7 +105,7 @@ export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compa
   }
 
   return (
-    <div className={`bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[var(--border-light)] transition-all group ${pastClass}`}>
+    <div className={`bg-[var(--card)] rounded-xl shadow-[var(--shadow-sm)] overflow-hidden hover:shadow-[var(--shadow)] transition-all group ${pastClass}`}>
       <div className={`flex items-center justify-between px-4 py-2 ${mealBgColors[mealType]} border-b ${mealBorderColors[mealType]}`}>
         <span className={`text-[12px] font-bold uppercase tracking-wide ${mealColors[mealType]}`}>{MEAL_LABELS[mealType]}</span>
         <div className="flex items-center gap-1">
@@ -135,7 +135,7 @@ export function MealCard({ mealType, recipe, locked, onToggleLock, onSwap, compa
           </p>
           {recipe.macros && (
             <div className="flex items-center gap-3 text-[11px]">
-              <span className="flex items-center gap-1 text-[var(--sage)] font-medium">
+              <span className="flex items-center gap-1 text-emerald-400 font-medium">
                 <Drumstick size={11} />{recipe.macros.protein}g prot
               </span>
               <span className="flex items-center gap-1 text-amber-400/70 font-medium">

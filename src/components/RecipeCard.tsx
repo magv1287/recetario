@@ -14,7 +14,7 @@ interface RecipeCardProps {
 
 export function RecipeCard({ recipe, onClick, isFavorite = false, onToggleFavorite }: RecipeCardProps) {
   return (
-    <div className="relative bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden hover:border-[var(--border-light)] transition-all group animate-fadeIn">
+    <div className="relative bg-[var(--card)] rounded-xl shadow-[var(--shadow-sm)] overflow-hidden hover:shadow-[var(--shadow)] transition-all group animate-fadeIn">
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -33,7 +33,7 @@ export function RecipeCard({ recipe, onClick, isFavorite = false, onToggleFavori
         onClick={onClick}
         className="w-full text-left active:scale-[0.98] transition-transform"
       >
-        <div className="aspect-[16/10] w-full bg-[#0c0c0e] relative overflow-hidden">
+        <div className="aspect-[16/10] w-full bg-[var(--background)] relative overflow-hidden">
           {recipe.imageUrl ? (
             <img
               src={recipe.imageUrl}

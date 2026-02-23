@@ -27,11 +27,11 @@ export function TopNav() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#09090b]/90 backdrop-blur-xl border-b border-[#1E1E22] safe-top hidden lg:block">
-      <div className="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-[var(--background)]/90 backdrop-blur-xl border-b border-[var(--border)] safe-top hidden lg:block">
+      <div className="max-w-7xl mx-auto px-8 h-14 flex items-center justify-between">
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-2.5">
-            <ChefHat className="text-[var(--accent)]" size={26} />
+            <ChefHat className="text-[var(--accent)]" size={24} />
             <span className="text-lg font-bold text-[var(--foreground)]">Recetario</span>
           </Link>
 

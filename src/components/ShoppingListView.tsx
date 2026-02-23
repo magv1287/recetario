@@ -41,7 +41,7 @@ export function ShoppingListView({ shoppingList, onToggleItem }: ShoppingListVie
   return (
     <div className="space-y-5">
       {/* Progress */}
-      <div className="flex items-center gap-3 bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
+      <div className="flex items-center gap-3 bg-[var(--card)] rounded-xl shadow-[var(--shadow-sm)] p-4">
         <ShoppingCart size={18} className="text-[var(--accent)]" />
         <div className="flex-1">
           <div className="flex items-center justify-between mb-1.5">

@@ -121,7 +121,7 @@ export default function ShoppingListPage() {
             <button
               onClick={handleGenerate}
               disabled={generating}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] rounded-lg text-sm font-bold text-black hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] rounded-lg text-sm font-bold text-white hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50"
             >
               {generating ? (
                 <Loader2 className="animate-spin" size={15} />

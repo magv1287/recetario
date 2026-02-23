@@ -23,7 +23,7 @@ export function PDFPageSelector({
   const handleConfirm = () => {
     switch (mode) {
       case "all":
-        onConfirm(null); // null = all pages
+        onConfirm(null);
         break;
       case "range":
         if (!rangeText.trim()) return;
@@ -48,29 +48,27 @@ export function PDFPageSelector({
 
   return (
     <div className="space-y-4 animate-fadeIn">
-      {/* Header */}
-      <div className="flex items-center gap-3 p-3 bg-[#18181b] rounded-xl border border-zinc-800">
-        <FileText className="text-amber-500 shrink-0" size={20} />
+      <div className="flex items-center gap-3 p-3 bg-[var(--card)] rounded-xl border border-[var(--border)]">
+        <FileText className="text-[var(--accent)] shrink-0" size={20} />
         <div className="min-w-0">
-          <p className="text-sm font-medium text-zinc-200 truncate">
+          <p className="text-sm font-medium text-[var(--foreground)] truncate">
             {fileName}
           </p>
-          <p className="text-xs text-zinc-500">{totalPages} páginas</p>
+          <p className="text-xs text-[var(--muted-dark)]">{totalPages} páginas</p>
         </div>
       </div>
 
-      <p className="text-sm text-zinc-400">
+      <p className="text-sm text-[var(--muted)]">
         Este PDF tiene {totalPages} páginas. ¿Cuáles quieres procesar?
       </p>
 
-      {/* Mode selector */}
       <div className="space-y-2">
         <button
           onClick={() => setMode("all")}
           className={`w-full text-left p-3 rounded-xl border text-sm transition-colors ${
             mode === "all"
-              ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-              : "bg-[#18181b] border-zinc-800 text-zinc-400 hover:border-zinc-700"
+              ? "bg-[var(--accent-soft)] border-[var(--accent)]/30 text-[var(--accent)]"
+              : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--border-light)]"
           }`}
         >
           <span className="font-medium">Todas las páginas</span>
@@ -83,8 +81,8 @@ export function PDFPageSelector({
           onClick={() => setMode("range")}
           className={`w-full text-left p-3 rounded-xl border text-sm transition-colors ${
             mode === "range"
-              ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-              : "bg-[#18181b] border-zinc-800 text-zinc-400 hover:border-zinc-700"
+              ? "bg-[var(--accent-soft)] border-[var(--accent)]/30 text-[var(--accent)]"
+              : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--border-light)]"
           }`}
         >
           <span className="font-medium">Rango de páginas</span>
@@ -97,8 +95,8 @@ export function PDFPageSelector({
           onClick={() => setMode("specific")}
           className={`w-full text-left p-3 rounded-xl border text-sm transition-colors ${
             mode === "specific"
-              ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-              : "bg-[#18181b] border-zinc-800 text-zinc-400 hover:border-zinc-700"
+              ? "bg-[var(--accent-soft)] border-[var(--accent)]/30 text-[var(--accent)]"
+              : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--border-light)]"
           }`}
         >
           <span className="font-medium">Páginas específicas</span>
@@ -108,18 +106,16 @@ export function PDFPageSelector({
         </button>
       </div>
 
-      {/* Range input */}
       {mode === "range" && (
         <input
           type="text"
           value={rangeText}
           onChange={(e) => setRangeText(e.target.value)}
           placeholder="Ej: 1-5, 8, 12-15"
-          className="w-full bg-[#18181b] border border-zinc-800 rounded-xl py-3 px-4 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-amber-500/50"
+          className="w-full bg-[var(--background)] border border-[var(--border)] rounded-xl py-3 px-4 text-sm text-[var(--foreground)] placeholder-[var(--muted-dark)] focus:outline-none focus:border-[var(--accent)]/40"
         />
       )}
 
-      {/* Page grid */}
       {mode === "specific" && (
         <div className="grid grid-cols-6 gap-2 max-h-48 overflow-y-auto p-1">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -128,8 +124,8 @@ export function PDFPageSelector({
               onClick={() => togglePage(page)}
               className={`py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedPages.has(page)
-                  ? "bg-amber-500 text-black"
-                  : "bg-[#18181b] text-zinc-500 border border-zinc-800 hover:border-zinc-700"
+                  ? "bg-[var(--accent)] text-white"
+                  : "bg-[var(--card)] text-[var(--muted-dark)] border border-[var(--border)] hover:border-[var(--border-light)]"
               }`}
             >
               {page}
@@ -138,17 +134,16 @@ export function PDFPageSelector({
         </div>
       )}
 
-      {/* Actions */}
       <div className="flex gap-3">
         <button
           onClick={onCancel}
-          className="flex-1 py-3 border border-zinc-800 rounded-xl text-zinc-400 text-sm font-medium hover:bg-zinc-800 transition-colors"
+          className="flex-1 py-3 border border-[var(--border)] rounded-xl text-[var(--muted)] text-sm font-medium hover:bg-[var(--card-hover)] transition-colors"
         >
           Cancelar
         </button>
         <button
           onClick={handleConfirm}
-          className="flex-1 py-3 bg-amber-500 hover:bg-amber-600 rounded-xl text-black text-sm font-bold transition-colors flex items-center justify-center gap-1"
+          className="flex-1 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] rounded-xl text-white text-sm font-bold transition-colors flex items-center justify-center gap-1"
         >
           Procesar
           <ChevronRight size={16} />

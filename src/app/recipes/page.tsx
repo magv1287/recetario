@@ -130,7 +130,7 @@ export default function RecipesPage() {
           </div>
           <button
             onClick={() => setShowImport(true)}
-            className="hidden lg:flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-black font-bold px-5 py-2.5 rounded-lg text-sm transition-colors"
+            className="hidden lg:flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold px-5 py-2.5 rounded-lg text-sm transition-colors"
           >
             <Plus size={16} />
             Importar receta
@@ -172,7 +172,7 @@ export default function RecipesPage() {
                 onClick={() => setSourceFilter(opt.value)}
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-lg border text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
                   sourceFilter === opt.value
-                    ? "bg-[var(--accent)] border-[var(--accent)] text-black"
+                    ? "bg-[var(--accent)] border-[var(--accent)] text-white"
                     : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] active:scale-95"
                 }`}
               >
@@ -190,7 +190,7 @@ export default function RecipesPage() {
                 onClick={() => setActiveCategory(cat.name)}
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-lg border text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
                   activeCategory === cat.name
-                    ? "bg-[var(--accent)] border-[var(--accent)] text-black"
+                    ? "bg-[var(--accent)] border-[var(--accent)] text-white"
                     : "bg-[var(--card)] border-[var(--border)] text-[var(--muted)] active:scale-95"
                 }`}
               >
@@ -263,7 +263,7 @@ export default function RecipesPage() {
                 </p>
                 <button
                   onClick={() => setShowImport(true)}
-                  className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-black font-bold px-6 py-3 rounded-xl text-sm transition-colors"
+                  className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors"
                 >
                   <Plus size={16} />
                   Importar receta
@@ -303,7 +303,7 @@ export default function RecipesPage() {
       {/* Mobile FAB */}
       <button
         onClick={() => setShowImport(true)}
-        className="fixed right-5 bottom-24 z-40 bg-[var(--accent)] hover:bg-[var(--accent-hover)] active:scale-95 text-black p-3.5 rounded-xl shadow-lg transition-all lg:hidden"
+        className="fixed right-5 bottom-24 z-40 bg-[var(--accent)] hover:bg-[var(--accent-hover)] active:scale-95 text-white p-3.5 rounded-xl shadow-lg transition-all lg:hidden"
         aria-label="Importar receta"
       >
         <Plus size={24} strokeWidth={2.5} />

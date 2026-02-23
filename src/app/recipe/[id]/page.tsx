@@ -207,7 +207,10 @@ export default function RecipeDetailPage({
       </div>
 
       {/* Mobile: hero image with overlay buttons */}
-      <div className="lg:hidden relative w-full aspect-[16/10] max-h-[40vh] bg-[#0c0c0e]">
+      <div
+        className="lg:hidden relative w-full aspect-[16/10] max-h-[40vh] bg-[var(--background)]"
+        style={{ marginTop: "calc(-1 * env(safe-area-inset-top, 0px))" }}
+      >
         {currentImage ? (
           <img
             src={currentImage}
@@ -222,11 +225,15 @@ export default function RecipeDetailPage({
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-[var(--background)]/20" />
         <button
           onClick={() => router.back()}
-          className="absolute top-4 left-4 bg-black/40 backdrop-blur-sm p-2.5 rounded-xl z-10"
+          className="absolute left-4 bg-black/40 backdrop-blur-sm p-2.5 rounded-xl z-10"
+          style={{ top: "calc(1rem + env(safe-area-inset-top, 0px))" }}
         >
           <ArrowLeft size={20} />
         </button>
-        <div className="absolute top-4 right-4 flex gap-2 z-10">
+        <div
+          className="absolute right-4 flex gap-2 z-10"
+          style={{ top: "calc(1rem + env(safe-area-inset-top, 0px))" }}
+        >
           <button
             onClick={() => toggleFavorite(recipe.id)}
             className="bg-black/40 backdrop-blur-sm p-2.5 rounded-xl active:scale-90 transition-transform"
@@ -260,7 +267,7 @@ export default function RecipeDetailPage({
         {editing ? (
           <div className="max-w-2xl mx-auto lg:pt-6 space-y-5 animate-fadeIn">
             <div className="hidden lg:block">
-              <div className="relative w-full aspect-[16/7] rounded-xl overflow-hidden bg-[#0c0c0e] border border-[var(--border)]">
+              <div className="relative w-full aspect-[16/7] rounded-xl overflow-hidden bg-[var(--background)] border border-[var(--border)]">
                 {editImagePreview ? (
                   <img src={editImagePreview} alt="" className="w-full h-full object-cover" />
                 ) : (
@@ -268,7 +275,7 @@ export default function RecipeDetailPage({
                     <ChefHat className="text-[var(--border-light)]" size={64} />
                   </div>
                 )}
-                <label className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-lg cursor-pointer flex items-center gap-2 text-sm font-medium text-zinc-200 hover:bg-black/70 transition-colors">
+                <label className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-lg cursor-pointer flex items-center gap-2 text-sm font-medium text-[var(--foreground)] hover:bg-black/70 transition-colors">
                   <ImageIcon size={15} className="text-[var(--accent)]" />
                   Cambiar imagen
                   <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
@@ -358,7 +365,7 @@ export default function RecipeDetailPage({
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 py-3.5 bg-[var(--accent)] rounded-xl text-black text-sm font-bold flex items-center justify-center gap-2 hover:bg-[var(--accent-hover)] transition-colors"
+                className="flex-1 py-3.5 bg-[var(--accent)] rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-[var(--accent-hover)] transition-colors"
               >
                 {saving ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} />}
                 {saving ? "Guardando..." : "Guardar"}
@@ -369,7 +376,7 @@ export default function RecipeDetailPage({
           <div className="lg:flex lg:gap-10 lg:pt-6 animate-fadeIn">
             <div className="hidden lg:block lg:w-2/5 shrink-0">
               <div className="sticky top-24">
-                <div className="rounded-xl overflow-hidden bg-[#0c0c0e] border border-[var(--border)]">
+                <div className="rounded-xl overflow-hidden bg-[var(--background)] border border-[var(--border)] shadow-[var(--shadow)]">
                   {recipe.imageUrl ? (
                     <img
                       src={recipe.imageUrl}
@@ -437,7 +444,7 @@ export default function RecipeDetailPage({
               )}
 
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
+                <div className="bg-[var(--card)] rounded-xl shadow-[var(--shadow-sm)] p-5">
                   <h2 className="text-[var(--accent)] text-xs font-bold uppercase tracking-wider mb-4">
                     Ingredientes ({recipe.ingredients?.length || 0})
                   </h2>
@@ -451,7 +458,7 @@ export default function RecipeDetailPage({
                   </ul>
                 </div>
 
-                <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
+                <div className="bg-[var(--card)] rounded-xl shadow-[var(--shadow-sm)] p-5">
                   <h2 className="text-[var(--accent)] text-xs font-bold uppercase tracking-wider mb-4">
                     Preparacion
                   </h2>

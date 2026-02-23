@@ -217,7 +217,7 @@ export default function CalendarPage() {
                 <button
                   onClick={() => handleGenerate(false)}
                   disabled={generating || copying}
-                  className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-black font-bold px-6 py-3 rounded-xl text-sm transition-colors disabled:opacity-50"
+                  className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors disabled:opacity-50"
                 >
                   {generating ? (
                     <><Loader2 className="animate-spin" size={16} />Generando...</>

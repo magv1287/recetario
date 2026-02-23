@@ -12,14 +12,14 @@ interface DeleteConfirmProps {
 export function DeleteConfirm({ title, onConfirm, onCancel }: DeleteConfirmProps) {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-fadeIn">
-      <div className="bg-[#18181b] border border-zinc-800 w-full max-w-sm rounded-2xl p-6 animate-scaleIn">
+      <div className="bg-[var(--card)] border border-[var(--border)] w-full max-w-sm rounded-xl p-6 animate-scaleIn shadow-[var(--shadow)]">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
             <AlertTriangle className="text-red-400" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-zinc-100">Eliminar receta</h3>
-            <p className="text-sm text-zinc-500 mt-0.5">
+            <h3 className="text-lg font-semibold text-[var(--foreground)]">Eliminar receta</h3>
+            <p className="text-sm text-[var(--muted-dark)] mt-0.5">
               ¿Eliminar &ldquo;{title}&rdquo;? Esta acción no se puede deshacer.
             </p>
           </div>
@@ -28,7 +28,7 @@ export function DeleteConfirm({ title, onConfirm, onCancel }: DeleteConfirmProps
         <div className="flex gap-3 mt-6">
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 px-4 border border-zinc-800 rounded-xl text-zinc-400 text-sm font-medium hover:bg-zinc-800 transition-colors"
+            className="flex-1 py-2.5 px-4 border border-[var(--border)] rounded-xl text-[var(--muted)] text-sm font-medium hover:bg-[var(--card-hover)] transition-colors"
           >
             Cancelar
           </button>

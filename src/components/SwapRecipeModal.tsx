@@ -87,7 +87,7 @@ export function SwapRecipeModal({ day, meal, currentRecipe, weekId, onClose, onS
             <button
               onClick={handleSwap}
               disabled={loading}
-              className="flex-1 py-3 bg-[var(--accent)] rounded-xl text-black text-sm font-bold flex items-center justify-center gap-2 hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50"
+              className="flex-1 py-3 bg-[var(--accent)] rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 className="animate-spin" size={16} />

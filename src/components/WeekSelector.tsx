@@ -19,20 +19,20 @@ function formatDateRange(weekId: string): string {
 
 export function WeekSelector({ weekId, onPrev, onNext }: WeekSelectorProps) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <button
         onClick={onPrev}
-        className="p-2 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors"
+        className="p-2 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors shadow-[var(--shadow-sm)]"
       >
         <ChevronLeft size={16} />
       </button>
-      <div className="text-center min-w-[160px]">
-        <p className="text-xs text-[var(--muted-dark)] font-medium uppercase tracking-wider">{weekId}</p>
-        <p className="text-sm text-[var(--foreground)] font-semibold">{formatDateRange(weekId)}</p>
+      <div className="text-center min-w-[140px]">
+        <p className="text-[10px] text-[var(--muted-dark)] font-semibold uppercase tracking-wider">{weekId}</p>
+        <p className="text-sm text-[var(--foreground)] font-bold">{formatDateRange(weekId)}</p>
       </div>
       <button
         onClick={onNext}
-        className="p-2 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors"
+        className="p-2 rounded-lg bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors shadow-[var(--shadow-sm)]"
       >
         <ChevronRight size={16} />
       </button>
