@@ -38,12 +38,11 @@ DIETA ANTI-INFLAMATORIA (basada en recomendaciones del Dr. Guillermo Navarrete y
 // Cómo quieres que Gemini varíe las recetas durante la semana
 // ------------------------------------------------------------
 export const VARIETY_RULES = `
-- Mezcla 5+ cocinas: mexicana, asiática, mediterránea, peruana, francesa, india, etc.
-- No repetir perfil de sabor dos dias seguidos
-- Alternar proteínas: pollo (max 2/semana), res, cerdo, pescado, salmón, camarones, pavo, huevos
-- Variar técnicas pero priorizando las que sirven para batch cooking: horno (varias bandejas a la vez), salteado rápido, plancha
+- Mezcla 5+ perfiles de sabor durante la semana: asiático (sésamo, soja, jengibre), mediterráneo (oliva, limón, hierbas), mexicano (comino, cilantro, chile), peruano (ají, limón), indio (curry, cúrcuma), francés (mostaza, estragón), etc.
+- La variedad viene de las SALSAS y ACOMPAÑAMIENTOS, no de cocinar proteínas diferentes cada día
+- Elegir 3-4 proteínas base para la semana. Cada una aparece en 2-4 comidas con sabores diferentes
+- No repetir perfil de sabor dos días seguidos (misma proteína OK si la salsa/preparación es totalmente diferente)
 - Incluir aguacate en algunos desayunos pero no todos (máx 5-6 por semana para 2 personas)
-- Reutilizar proteínas base con diferentes salsas/acompañamientos para simplificar prep (ej: pollo al horno el domingo → lunes con salsa asiática, martes con pesto)
 `.trim();
 
 // ------------------------------------------------------------
@@ -88,13 +87,16 @@ export const SHOPPING_LIST_RULES = `
 export const AI_ROLE = `Crea un plan de comidas para 7 dias (desayuno, almuerzo, cena) optimizado para BATCH COOKING / MEAL PREP dominical. MUY IMPORTANTE: las cantidades de TODOS los ingredientes deben ser el TOTAL para el número de porciones indicado, NO por persona.
 
 FILOSOFÍA BATCH COOKING:
-- La mayoría de comidas deben poder prepararse el DOMINGO y guardarse en contenedores para la semana
-- Entre semana solo se debería necesitar recalentar (microondas, sartén 5 min, o comer frío)
+- Todo se cocina el DOMINGO. Entre semana solo recalentar (microondas, sartén 5 min) o comer frío.
+- REGLA CLAVE DE PROTEÍNAS: Agrupar la semana por proteína base. Cocinar cada proteína UNA sola vez en gran cantidad el domingo y usarla en VARIAS recetas con diferente sabor/salsa/acompañamiento. Ejemplo:
+  * Domingo: hornear 3 lb de muslo de pollo con sal y pimienta → Lunes almuerzo: pollo con salsa asiática de sésamo + brócoli. Martes almuerzo: pollo deshebrado con pesto y espinaca. Miércoles cena: pollo en ensalada César con parmesano.
+  * Domingo: sellar 2.5 lb de flank steak → Jueves almuerzo: res en fajitas con pimiento. Viernes almuerzo: res con chimichurri y espárragos.
+  * Domingo: hornear 2 lb de salmón → Sábado: salmón frío con aguacate y pepino.
+- Usar 3-4 proteínas base por semana máximo (para no cocinar 7 cosas distintas). Cada proteína aparece en 2-4 comidas.
+- Los desayunos deben ser especialmente rápidos: huevos revueltos (5 min), omelettes, o cosas pre-preparadas el domingo (egg muffins, frittata cortada en porciones)
+- Máximo 1-2 recetas por semana que requieran cocinar en el momento (ej: huevos frescos, un pescado del día)
 - Priorizar recetas que se mantienen bien en la nevera 4-5 días
-- Las proteínas se pueden cocinar en batch: hornear varias bandejas de pollo, res, etc. al mismo tiempo
-- Los desayunos deben ser especialmente rápidos: huevos revueltos (5 min), omelettes, o cosas pre-preparadas
-- Máximo 2-3 recetas por semana que requieran cocinar en el momento (ej: un pescado fresco)
-- Sé creativo pero PRÁCTICO: recetas sencillas, pocos pasos, ingredientes que se repiten entre comidas para simplificar la compra`;
+- Sé creativo con las SALSAS y ACOMPAÑAMIENTOS para que la misma proteína no sepa igual dos días seguidos`;
 
 // ------------------------------------------------------------
 // ROL PARA SWAP (cambiar una receta individual)
