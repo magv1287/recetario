@@ -27,8 +27,11 @@ DIETA ANTI-INFLAMATORIA (basada en recomendaciones del Dr. Guillermo Navarrete y
   * CON MODERACIÓN (IG medio-bajo, usar cantidades pequeñas): pimiento (bell pepper), berenjena (eggplant), tomate (solo como condimento, no como base), cebolla (solo para sofrito, cantidades pequeñas)
   * PROHIBIDAS (IG alto, elevan insulina): zanahoria, remolacha/betabel, calabaza/squash, maíz/elote, guisantes/arvejas, papa/batata/yuca, cualquier tubérculo
 - DISPONIBILIDAD: usar ingredientes fáciles de encontrar en supermercados de Massachusetts (Trader Joe's, Stop & Shop, Whole Foods). Priorizar productos de Trader Joe's y Stop & Shop
-- IMPORTANTE Frutas SOLO en almuerzo y limitadas: Limon/Lima, fresas, arándanos, frambuesas
-- NO frutas en desayuno ni cena (aguacate sí permitido siempre)
+- FRUTAS: solo berries altas en antioxidantes y bajas en azúcar. Permitidas en DESAYUNO y ALMUERZO (no en cena). Cantidad moderada: un puñado (~1/4 taza por persona).
+  * Permitidas: arándanos (blueberries), frambuesas (raspberries), fresas (strawberries), moras (blackberries), limón/lima
+  * Uso ideal: topping en desayunos (sobre huevos, omelette, o al lado), en ensaladas del almuerzo, o como snack post-almuerzo
+  * NO frutas en cena (aguacate sí permitido siempre, no cuenta como fruta)
+  * PROHIBIDAS: banano, mango, piña, uvas, sandía, melón, naranja y cualquier fruta alta en azúcar
 - PROHIBIDO: cordero, chía, queso azul (o similares), queso de cabra, azúcar, miel, agave, harinas, pan, pasta, arroz, papa, batata, yuca, maíz, cereales, avena, legumbres, zanahoria, remolacha, calabaza, guisantes, aceites vegetales/semillas, margarina, alimentos ultraprocesados
 - Priorizar alimentos reales, antiinflamatorios, sin procesados
 `.trim();

@@ -82,9 +82,9 @@ export function getSwapRecipePrompt(
   excludeTitles: string[] = []
 ): string {
   const mealLabel = mealType === "breakfast" ? "desayuno" : mealType === "lunch" ? "almuerzo" : "cena";
-  const fruitNote = mealType === "lunch"
-    ? "Frutas permitidas en almuerzo: fresas, arándanos, frambuesas."
-    : "NO frutas (aguacate sí permitido siempre).";
+  const fruitNote = mealType === "dinner"
+    ? "NO frutas en cena (aguacate sí permitido siempre)."
+    : "Berries permitidas (arándanos, frambuesas, fresas, moras): un puñado como topping o acompañamiento.";
   const allExcluded = [currentTitle, ...excludeTitles].filter(Boolean);
 
   return `${AI_SWAP_ROLE} Para ${mealLabel}.
