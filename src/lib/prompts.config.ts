@@ -41,8 +41,9 @@ export const VARIETY_RULES = `
 - Mezcla 5+ cocinas: mexicana, asiática, mediterránea, peruana, francesa, india, etc.
 - No repetir perfil de sabor dos dias seguidos
 - Alternar proteínas: pollo (max 2/semana), res, cerdo, pescado, salmón, camarones, pavo, huevos
-- Variar técnicas: plancha, horno, salteado, parrilla, estofado
+- Variar técnicas pero priorizando las que sirven para batch cooking: horno (varias bandejas a la vez), salteado rápido, plancha
 - Incluir aguacate en algunos desayunos pero no todos (máx 5-6 por semana para 2 personas)
+- Reutilizar proteínas base con diferentes salsas/acompañamientos para simplificar prep (ej: pollo al horno el domingo → lunes con salsa asiática, martes con pesto)
 `.trim();
 
 // ------------------------------------------------------------
@@ -50,7 +51,7 @@ export const VARIETY_RULES = `
 // Cómo quieres que se escriban los pasos e ingredientes
 // ------------------------------------------------------------
 export const COOKING_INSTRUCTIONS = `
-- PASOS: 5-7 pasos claros y detallados. Cada paso debe explicar:
+- PASOS: 4-6 pasos claros y detallados. Cada paso debe explicar:
   * QUÉ hacer exactamente (cortar, sazonar, sellar, hornear, etc.)
   * CÓMO hacerlo (en cubos de 2cm, a fuego medio-alto, con tapa, etc.)
   * CUÁNTO tiempo (saltear 3-4 minutos, hornear 20 min, reposar 5 min)
@@ -58,8 +59,10 @@ export const COOKING_INSTRUCTIONS = `
   * Temperaturas exactas del horno/sartén cuando aplique (400°F/200°C, fuego medio-alto)
   Ejemplo de buen paso: "Calienta 2 cucharadas de aceite de oliva extra virgen en una sartén grande a fuego medio-alto. Cuando el aceite brille, coloca las tiras de pollo sin amontonar. Cocina 3-4 minutos por lado sin mover, hasta que estén doradas y el centro ya no esté rosado."
   Ejemplo de MAL paso: "Cocina el pollo en una sartén." (demasiado vago)
+- BATCH COOKING: Si la receta es para meal prep, incluir como PRIMER paso: "PREP DOMINGO:" y explicar qué se cocina el domingo. Luego como ÚLTIMO paso: "ENTRE SEMANA:" y explicar cómo recalentar/servir (ej: "Recalentar en microondas 2 min o en sartén a fuego medio 3-4 min. Servir con aguacate fresco en rodajas.")
+- ALMACENAMIENTO: Indicar siempre cómo guardar (contenedor hermético en nevera, dura X días)
 - INGREDIENTES: cantidades exactas mostrando SIEMPRE ambas unidades: libras y gramos/kg juntos. Ejemplos: "0.5 lb (227g) pollo", "1.1 lb (500g) res", "3.3 lb (1.5 kg) salmón", "30g (1 oz) queso". Siempre especificar "aceite de oliva extra virgen" o "aceite de coco", nunca solo "aceite". Indicar la preparación del ingrediente: "en cubos", "en rodajas finas", "picado", "desmenuzado", etc.
-- DESCRIPCION: 1-2 frases apetitosas
+- DESCRIPCION: 1-2 frases apetitosas. Si es meal prep, mencionar que se prepara el domingo.
 `.trim();
 
 // ------------------------------------------------------------
@@ -82,9 +85,18 @@ export const SHOPPING_LIST_RULES = `
 // ROL / PERSONALIDAD DE GEMINI
 // Cómo quieres que Gemini se comporte
 // ------------------------------------------------------------
-export const AI_ROLE = `Crea un plan de comidas para 7 dias (desayuno, almuerzo, cena). Sé un chef experto creativo con cocina internacional pero con recetas sencillas y rapidas. MUY IMPORTANTE: las cantidades de TODOS los ingredientes deben ser el TOTAL para el número de porciones indicado, NO por persona.`;
+export const AI_ROLE = `Crea un plan de comidas para 7 dias (desayuno, almuerzo, cena) optimizado para BATCH COOKING / MEAL PREP dominical. MUY IMPORTANTE: las cantidades de TODOS los ingredientes deben ser el TOTAL para el número de porciones indicado, NO por persona.
+
+FILOSOFÍA BATCH COOKING:
+- La mayoría de comidas deben poder prepararse el DOMINGO y guardarse en contenedores para la semana
+- Entre semana solo se debería necesitar recalentar (microondas, sartén 5 min, o comer frío)
+- Priorizar recetas que se mantienen bien en la nevera 4-5 días
+- Las proteínas se pueden cocinar en batch: hornear varias bandejas de pollo, res, etc. al mismo tiempo
+- Los desayunos deben ser especialmente rápidos: huevos revueltos (5 min), omelettes, o cosas pre-preparadas
+- Máximo 2-3 recetas por semana que requieran cocinar en el momento (ej: un pescado fresco)
+- Sé creativo pero PRÁCTICO: recetas sencillas, pocos pasos, ingredientes que se repiten entre comidas para simplificar la compra`;
 
 // ------------------------------------------------------------
 // ROL PARA SWAP (cambiar una receta individual)
 // ------------------------------------------------------------
-export const AI_SWAP_ROLE = `Genera UNA receta alternativa, diferente en sabor y cocina a las listadas.`;
+export const AI_SWAP_ROLE = `Genera UNA receta alternativa, diferente en sabor y cocina a las listadas. Prioriza recetas que se puedan preparar con anticipación (meal prep/batch cooking) y recalentar entre semana.`;
