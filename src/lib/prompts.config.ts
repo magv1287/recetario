@@ -47,8 +47,15 @@ export const VARIETY_RULES = `
 // Cómo quieres que se escriban los pasos e ingredientes
 // ------------------------------------------------------------
 export const COOKING_INSTRUCTIONS = `
-- PASOS: 4-6 pasos detallados con temperaturas, tiempos y señales visuales
-- INGREDIENTES: cantidades exactas mostrando SIEMPRE ambas unidades: libras y gramos/kg juntos. Ejemplos: "0.5 lb (227g) pollo", "1.1 lb (500g) res", "3.3 lb (1.5 kg) salmón", "30g (1 oz) queso". Siempre especificar "aceite de oliva extra virgen" o "aceite de coco", nunca solo "aceite"
+- PASOS: 5-7 pasos claros y detallados. Cada paso debe explicar:
+  * QUÉ hacer exactamente (cortar, sazonar, sellar, hornear, etc.)
+  * CÓMO hacerlo (en cubos de 2cm, a fuego medio-alto, con tapa, etc.)
+  * CUÁNTO tiempo (saltear 3-4 minutos, hornear 20 min, reposar 5 min)
+  * CUÁNDO está listo (hasta dorar, hasta que suelte jugo claro, hasta que esté crujiente por fuera)
+  * Temperaturas exactas del horno/sartén cuando aplique (400°F/200°C, fuego medio-alto)
+  Ejemplo de buen paso: "Calienta 2 cucharadas de aceite de oliva extra virgen en una sartén grande a fuego medio-alto. Cuando el aceite brille, coloca las tiras de pollo sin amontonar. Cocina 3-4 minutos por lado sin mover, hasta que estén doradas y el centro ya no esté rosado."
+  Ejemplo de MAL paso: "Cocina el pollo en una sartén." (demasiado vago)
+- INGREDIENTES: cantidades exactas mostrando SIEMPRE ambas unidades: libras y gramos/kg juntos. Ejemplos: "0.5 lb (227g) pollo", "1.1 lb (500g) res", "3.3 lb (1.5 kg) salmón", "30g (1 oz) queso". Siempre especificar "aceite de oliva extra virgen" o "aceite de coco", nunca solo "aceite". Indicar la preparación del ingrediente: "en cubos", "en rodajas finas", "picado", "desmenuzado", etc.
 - DESCRIPCION: 1-2 frases apetitosas
 `.trim();
 
