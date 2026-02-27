@@ -16,17 +16,20 @@ DIETA ANTI-INFLAMATORIA (basada en recomendaciones del Dr. Guillermo Navarrete y
   * Cerdo: lomo (pork tenderloin), chuleta (pork chop), costilla (pork ribs), bacon/tocino
   * Pescado: salmón (salmon fillet), tilapia, bacalao (cod), atún (tuna steak), mahi-mahi
   * Mariscos: camarones (shrimp), vieiras (scallops)
-  * Otros: pavo molido (ground turkey), cordero (lamb chops/leg of lamb)
+  * Otros: pavo molido (ground turkey)
 - Carbohidratos: máximo 0.02lb netos por comida por persona (multiplicar por número de porciones)
 - ACEITES: SOLO aceite de oliva extra virgen o aceite de coco. PROHIBIDO cualquier aceite vegetal (canola, girasol, soja, maíz, cártamo)
 - MANTEQUILLA: siempre con sal
 - AGUACATE: buena grasa pero con moderación. Máximo 5-6 aguacates por semana para 2 personas. No poner aguacate en TODAS las comidas, alternar con otras grasas saludables.
 - Grasas saludables: aceite de oliva extra virgen, aceite de coco, aguacate, frutos secos, mantequilla con sal, beef tallow, queso, crema
-- Verduras solo de bajo IG: brócoli, espinaca, coliflor, calabacín (zucchini), espárragos, champiñones (mushrooms), pimiento (bell pepper), kale, bok choy, berenjena (eggplant), apio (celery), pepino (cucumber), rúcula (arugula), rábano (radish)
+- VERDURAS: SOLO las de muy bajo índice glucémico (IG) y baja carga glucémica. Objetivo: minimizar respuesta de insulina para favorecer pérdida de peso.
+  * PERMITIDAS (IG bajo, mínimo impacto en insulina): espinaca, kale, rúcula (arugula), bok choy, apio (celery), pepino (cucumber), rábano (radish), champiñones (mushrooms), brócoli, coliflor, espárragos, calabacín (zucchini), lechuga
+  * CON MODERACIÓN (IG medio-bajo, usar cantidades pequeñas): pimiento (bell pepper), berenjena (eggplant), tomate (solo como condimento, no como base), cebolla (solo para sofrito, cantidades pequeñas)
+  * PROHIBIDAS (IG alto, elevan insulina): zanahoria, remolacha/betabel, calabaza/squash, maíz/elote, guisantes/arvejas, papa/batata/yuca, cualquier tubérculo
 - DISPONIBILIDAD: usar ingredientes fáciles de encontrar en supermercados de Massachusetts (Trader Joe's, Stop & Shop, Whole Foods). Priorizar productos de Trader Joe's y Stop & Shop
 - IMPORTANTE Frutas SOLO en almuerzo y limitadas: Limon/Lima, fresas, arándanos, frambuesas
 - NO frutas en desayuno ni cena (aguacate sí permitido siempre)
-- PROHIBIDO: chía, queso azul (o similares), queso de cabra, azúcar, miel, agave, harinas, pan, pasta, arroz, papa, maíz, cereales, avena, legumbres, aceites vegetales/semillas, margarina, alimentos ultraprocesados
+- PROHIBIDO: cordero, chía, queso azul (o similares), queso de cabra, azúcar, miel, agave, harinas, pan, pasta, arroz, papa, batata, yuca, maíz, cereales, avena, legumbres, zanahoria, remolacha, calabaza, guisantes, aceites vegetales/semillas, margarina, alimentos ultraprocesados
 - Priorizar alimentos reales, antiinflamatorios, sin procesados
 `.trim();
 
@@ -37,7 +40,7 @@ DIETA ANTI-INFLAMATORIA (basada en recomendaciones del Dr. Guillermo Navarrete y
 export const VARIETY_RULES = `
 - Mezcla 5+ cocinas: mexicana, asiática, mediterránea, peruana, francesa, india, etc.
 - No repetir perfil de sabor dos dias seguidos
-- Alternar proteínas: pollo (max 2/semana), res, cerdo, pescado, salmón, camarones, pavo, huevos, cordero
+- Alternar proteínas: pollo (max 2/semana), res, cerdo, pescado, salmón, camarones, pavo, huevos
 - Variar técnicas: plancha, horno, salteado, parrilla, estofado
 - Incluir aguacate en algunos desayunos pero no todos (máx 5-6 por semana para 2 personas)
 `.trim();
