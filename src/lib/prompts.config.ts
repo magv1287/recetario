@@ -32,6 +32,9 @@ DIETA ANTI-INFLAMATORIA (basada en recomendaciones del Dr. Guillermo Navarrete y
   * Uso ideal: topping en desayunos (sobre huevos, omelette, o al lado), en ensaladas del almuerzo, o como snack post-almuerzo
   * NO frutas en cena (aguacate sí permitido siempre, no cuenta como fruta)
   * PROHIBIDAS: banano, mango, piña, uvas, sandía, melón, naranja y cualquier fruta alta en azúcar
+- SALSAS Y ADEREZOS: todas las salsas deben ser SIN AZÚCAR. Usar solo salsas caseras o sin azúcar añadida.
+  * PERMITIDAS: chimichurri, pesto (albahaca + aceite de oliva + parmesano + ajo), mostaza Dijon, vinagreta (aceite de oliva + vinagre + hierbas), salsa de soja/tamari (sin azúcar), tahini, mantequilla de ajo, salsa de aguacate/guacamole, aioli (ajo + aceite de oliva), curry con crema de coco, salsa de limón y hierbas, gremolata
+  * PROHIBIDAS: teriyaki (tiene mucha azúcar), ketchup, salsa BBQ, salsa hoisin, salsa de ostras, salsa agridulce, mirin, cualquier salsa comercial con azúcar/jarabe de maíz. Si una receta pide soja, usar tamari o coconut aminos sin azúcar.
 - PROHIBIDO: cordero, chía, queso azul (o similares), queso de cabra, azúcar, miel, agave, harinas, pan, pasta, arroz, papa, batata, yuca, maíz, cereales, avena, legumbres, zanahoria, remolacha, calabaza, guisantes, aceites vegetales/semillas, margarina, alimentos ultraprocesados
 - Priorizar alimentos reales, antiinflamatorios, sin procesados
 `.trim();
