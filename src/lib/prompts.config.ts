@@ -61,10 +61,10 @@ export const COOKING_INSTRUCTIONS = `
   * Temperaturas exactas del horno/sartén cuando aplique (400°F/200°C, fuego medio-alto)
   Ejemplo de buen paso: "Calienta 2 cucharadas de aceite de oliva extra virgen en una sartén grande a fuego medio-alto. Cuando el aceite brille, coloca las tiras de pollo sin amontonar. Cocina 3-4 minutos por lado sin mover, hasta que estén doradas y el centro ya no esté rosado."
   Ejemplo de MAL paso: "Cocina el pollo en una sartén." (demasiado vago)
-- BATCH COOKING: Si la receta es para meal prep, incluir como PRIMER paso: "PREP DOMINGO:" y explicar qué se cocina el domingo. Luego como ÚLTIMO paso: "ENTRE SEMANA:" y explicar cómo recalentar/servir (ej: "Recalentar en microondas 2 min o en sartén a fuego medio 3-4 min. Servir con aguacate fresco en rodajas.")
-- ALMACENAMIENTO: Indicar siempre cómo guardar (contenedor hermético en nevera, dura X días)
+- DESAYUNOS (frescos cada mañana): Los pasos deben ser rápidos (5-10 min máx). No incluir "PREP DOMINGO". Ejemplo: huevos revueltos con espinaca, omelette de champiñones, huevos fritos con aguacate.
+- ALMUERZOS y CENAS (meal prep dominical): Incluir como PRIMER paso "PREP DOMINGO:" explicando qué se cocina el domingo y cómo. Luego como ÚLTIMO paso "ENTRE SEMANA:" explicando cómo recalentar y servir (ej: "Recalentar en microondas 2 min o en sartén a fuego medio 3-4 min. Servir con aguacate fresco en rodajas."). Indicar almacenamiento: contenedor hermético en nevera, dura X días.
 - INGREDIENTES: cantidades exactas mostrando SIEMPRE ambas unidades: libras y gramos/kg juntos. Ejemplos: "0.5 lb (227g) pollo", "1.1 lb (500g) res", "3.3 lb (1.5 kg) salmón", "30g (1 oz) queso". Siempre especificar "aceite de oliva extra virgen" o "aceite de coco", nunca solo "aceite". Indicar la preparación del ingrediente: "en cubos", "en rodajas finas", "picado", "desmenuzado", etc.
-- DESCRIPCION: 1-2 frases apetitosas. Si es meal prep, mencionar que se prepara el domingo.
+- DESCRIPCION: 1-2 frases apetitosas. Para almuerzos/cenas mencionar que se prepara el domingo.
 `.trim();
 
 // ------------------------------------------------------------
@@ -89,17 +89,22 @@ export const SHOPPING_LIST_RULES = `
 // ------------------------------------------------------------
 export const AI_ROLE = `Crea un plan de comidas para 7 dias (desayuno, almuerzo, cena) optimizado para BATCH COOKING / MEAL PREP dominical. MUY IMPORTANTE: las cantidades de TODOS los ingredientes deben ser el TOTAL para el número de porciones indicado, NO por persona.
 
-FILOSOFÍA BATCH COOKING:
-- Todo se cocina el DOMINGO. Entre semana solo recalentar (microondas, sartén 5 min) o comer frío.
-- REGLA CLAVE DE PROTEÍNAS: Agrupar la semana por proteína base. Cocinar cada proteína UNA sola vez en gran cantidad el domingo y usarla en VARIAS recetas con diferente sabor/salsa/acompañamiento. Ejemplo:
-  * Domingo: hornear 3 lb de muslo de pollo con sal y pimienta → Lunes almuerzo: pollo con salsa asiática de sésamo + brócoli. Martes almuerzo: pollo deshebrado con pesto y espinaca. Miércoles cena: pollo en ensalada César con parmesano.
-  * Domingo: sellar 2.5 lb de flank steak → Jueves almuerzo: res en fajitas con pimiento. Viernes almuerzo: res con chimichurri y espárragos.
-  * Domingo: hornear 2 lb de salmón → Sábado: salmón frío con aguacate y pepino.
-- Usar 3-4 proteínas base por semana máximo (para no cocinar 7 cosas distintas). Cada proteína aparece en 2-4 comidas.
-- Los desayunos deben ser especialmente rápidos: huevos revueltos (5 min), omelettes, o cosas pre-preparadas el domingo (egg muffins, frittata cortada en porciones)
-- Máximo 1-2 recetas por semana que requieran cocinar en el momento (ej: huevos frescos, un pescado del día)
-- Priorizar recetas que se mantienen bien en la nevera 4-5 días
-- Sé creativo con las SALSAS y ACOMPAÑAMIENTOS para que la misma proteína no sepa igual dos días seguidos`;
+ESTRUCTURA DE LA SEMANA:
+- DOMINGO es el día de MEAL PREP. Los almuerzos y cenas de toda la semana (lunes a sábado) se preparan el domingo.
+- DESAYUNOS se hacen FRESCOS cada mañana (huevos revueltos, omelettes, huevos fritos con aguacate, etc. — máximo 5-10 min). NO pre-preparar desayunos.
+- ALMUERZOS y CENAS de lunes a sábado: TODO pre-cocinado el domingo. Entre semana SOLO recalentar en microondas 2 min o sartén 5 min.
+- El DOMINGO en sí no tiene meal prep propio — ese día se come lo que se va cocinando mientras se prepara el batch, o algo sencillo/rápido.
+
+REGLA CLAVE DE PROTEÍNAS:
+- Elegir 3-4 proteínas base para la semana. Cocinar cada una UNA sola vez en gran cantidad el domingo.
+- Cada proteína aparece en 2-4 almuerzos/cenas con diferente sabor/salsa/acompañamiento. Ejemplo:
+  * Domingo: hornear 3 lb de muslo de pollo con sal y pimienta → Lunes almuerzo: con salsa asiática + brócoli. Martes cena: deshebrado con pesto y espinaca. Miércoles almuerzo: en ensalada César.
+  * Domingo: sellar 2.5 lb de flank steak → Jueves almuerzo: en fajitas con pimiento. Viernes cena: con chimichurri y espárragos.
+  * Domingo: hornear 2 lb de salmón → Sábado almuerzo: frío con aguacate y pepino.
+- Las verduras/acompañamientos también se preparan el domingo: cortar, asar, blanquear. Guardar en contenedores separados.
+- Salsas y aderezos: preparar 3-4 salsas diferentes el domingo (pesto, chimichurri, vinagreta asiática, etc.) y usar cada una en distintas comidas.
+- Priorizar recetas que se mantienen bien en la nevera 4-5 días.
+- Sé creativo con las SALSAS y ACOMPAÑAMIENTOS para que la misma proteína no sepa igual dos días seguidos.`;
 
 // ------------------------------------------------------------
 // ROL PARA SWAP (cambiar una receta individual)
