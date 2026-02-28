@@ -4,6 +4,7 @@ import {
   VARIETY_RULES,
   COOKING_INSTRUCTIONS,
   SHOPPING_LIST_RULES,
+  PREP_GUIDE_RULES,
   AI_ROLE,
   AI_SWAP_ROLE,
 } from "./prompts.config";
@@ -111,4 +112,36 @@ REGLAS:
 ${SHOPPING_LIST_RULES}
 
 ${JSON_FORMAT_SHOPPING}`;
+}
+
+const JSON_FORMAT_PREP_GUIDE = `SOLO JSON:
+{
+  "steps": [
+    {
+      "phase": "Mise en place (30 min)",
+      "timing": "30 min",
+      "instructions": [
+        "Instrucción detallada 1...",
+        "Instrucción detallada 2..."
+      ]
+    },
+    {
+      "phase": "Horno - Tanda 1 (45 min)",
+      "timing": "45 min",
+      "instructions": ["..."]
+    }
+  ]
+}
+
+SOLO JSON, nada más.`;
+
+export function getPrepGuidePrompt(recipeSummaries: string[]): string {
+  return `${PREP_GUIDE_RULES}
+
+RECETAS DE LA SEMANA (almuerzos y cenas, lunes a sábado):
+${recipeSummaries.join("\n\n")}
+
+Crea la guía de prep del domingo organizada por FASES (no por receta). Agrupa las tareas para máxima eficiencia.
+
+${JSON_FORMAT_PREP_GUIDE}`;
 }

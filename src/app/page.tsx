@@ -4,14 +4,16 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/components/AuthProvider";
 import { useWeeklyPlan, getWeekId, getNextWeekId, getWeekDates } from "@/hooks/useWeeklyPlan";
+import { usePrepGuide } from "@/hooks/usePrepGuide";
 import { WeeklyCalendar } from "@/components/WeeklyCalendar";
 import { WeekSelector } from "@/components/WeekSelector";
 import { PortionSelector } from "@/components/PortionSelector";
+import { PrepGuideModal } from "@/components/PrepGuideModal";
 import { DayOfWeek, MealType, CronStatus } from "@/lib/types";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { isAdmin } from "@/lib/access-control";
-import { Loader2, Sparkles, ChefHat, Copy, RefreshCw } from "lucide-react";
+import { Loader2, Sparkles, ChefHat, Copy, RefreshCw, UtensilsCrossed } from "lucide-react";
 
 export default function CalendarPage() {
   const { user, loading: authLoading } = useAuthContext();
@@ -27,6 +29,10 @@ export default function CalendarPage() {
   const [userIsAdmin, setUserIsAdmin] = useState(false);
 
   const { plan, recipes, loading: planLoading, toggleLock, clearMeal, copyPlanToWeek } = useWeeklyPlan(user?.uid, weekId);
+  const { prepGuide } = usePrepGuide(user?.uid, weekId);
+
+  const [generatingPrep, setGeneratingPrep] = useState(false);
+  const [showPrepGuide, setShowPrepGuide] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -136,6 +142,28 @@ export default function CalendarPage() {
     }
   };
 
+  const handleGeneratePrepGuide = async () => {
+    if (generatingPrep) return;
+    setGeneratingPrep(true);
+    setError("");
+    try {
+      const res = await fetch("/api/generate-prep-guide", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ weekId }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Error al generar la guia");
+      }
+      setShowPrepGuide(true);
+    } catch (err: any) {
+      setError(err.message || "Error al generar la guia de prep");
+    } finally {
+      setGeneratingPrep(false);
+    }
+  };
+
   const handleToggleLock = useCallback(
     (day: DayOfWeek, meal: MealType) => { toggleLock(day, meal); },
     [toggleLock]
@@ -177,24 +205,36 @@ export default function CalendarPage() {
           <div className="flex items-center justify-between">
             <PortionSelector value={portions} onChange={setPortions} />
 
-            {hasPlan && isCurrentOrFuture && userIsAdmin && (
+            {hasPlan && (
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleGenerate(true)}
-                  disabled={generating}
-                  className="flex items-center gap-1.5 px-3.5 py-2 border border-[var(--border)] rounded-xl text-[13px] font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors disabled:opacity-50"
+                  onClick={prepGuide ? () => setShowPrepGuide(true) : handleGeneratePrepGuide}
+                  disabled={generatingPrep}
+                  className="flex items-center gap-1.5 px-3.5 py-2 bg-[var(--accent-soft)] border border-[var(--accent)]/20 rounded-xl text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent)]/15 transition-colors disabled:opacity-50"
                 >
-                  {generating ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />}
-                  Regenerar
+                  {generatingPrep ? <Loader2 className="animate-spin" size={14} /> : <UtensilsCrossed size={14} />}
+                  Prep Domingo
                 </button>
-                <button
-                  onClick={handleCopyToNextWeek}
-                  disabled={copying}
-                  className="flex items-center gap-1.5 px-3.5 py-2 border border-[var(--border)] rounded-xl text-[13px] font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors disabled:opacity-50"
-                >
-                  {copying ? <Loader2 className="animate-spin" size={14} /> : <Copy size={14} />}
-                  Copiar a siguiente
-                </button>
+                {isCurrentOrFuture && userIsAdmin && (
+                  <>
+                    <button
+                      onClick={() => handleGenerate(true)}
+                      disabled={generating}
+                      className="flex items-center gap-1.5 px-3.5 py-2 border border-[var(--border)] rounded-xl text-[13px] font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors disabled:opacity-50"
+                    >
+                      {generating ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />}
+                      Regenerar
+                    </button>
+                    <button
+                      onClick={handleCopyToNextWeek}
+                      disabled={copying}
+                      className="flex items-center gap-1.5 px-3.5 py-2 border border-[var(--border)] rounded-xl text-[13px] font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-light)] transition-colors disabled:opacity-50"
+                    >
+                      {copying ? <Loader2 className="animate-spin" size={14} /> : <Copy size={14} />}
+                      Copiar a siguiente
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -257,6 +297,10 @@ export default function CalendarPage() {
           />
         )}
       </div>
+
+      {showPrepGuide && prepGuide && (
+        <PrepGuideModal guide={prepGuide} onClose={() => setShowPrepGuide(false)} />
+      )}
     </main>
   );
 }

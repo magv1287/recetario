@@ -134,3 +134,16 @@ export interface CronStatus {
   weekId: string;
   success: boolean;
 }
+
+export interface PrepGuideStep {
+  phase: string;
+  instructions: string[];
+  timing: string;
+}
+
+export interface PrepGuide {
+  id: string;
+  userId: string;
+  steps: PrepGuideStep[];
+  generatedAt: Timestamp;
+}

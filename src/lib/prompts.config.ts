@@ -61,10 +61,10 @@ export const COOKING_INSTRUCTIONS = `
   * Temperaturas exactas del horno/sartén cuando aplique (400°F/200°C, fuego medio-alto)
   Ejemplo de buen paso: "Calienta 2 cucharadas de aceite de oliva extra virgen en una sartén grande a fuego medio-alto. Cuando el aceite brille, coloca las tiras de pollo sin amontonar. Cocina 3-4 minutos por lado sin mover, hasta que estén doradas y el centro ya no esté rosado."
   Ejemplo de MAL paso: "Cocina el pollo en una sartén." (demasiado vago)
-- DESAYUNOS (frescos cada mañana): Los pasos deben ser rápidos (5-10 min máx). No incluir "PREP DOMINGO". Ejemplo: huevos revueltos con espinaca, omelette de champiñones, huevos fritos con aguacate.
-- ALMUERZOS y CENAS (meal prep dominical): Incluir como PRIMER paso "PREP DOMINGO:" explicando qué se cocina el domingo y cómo. Luego como ÚLTIMO paso "ENTRE SEMANA:" explicando cómo recalentar y servir (ej: "Recalentar en microondas 2 min o en sartén a fuego medio 3-4 min. Servir con aguacate fresco en rodajas."). Indicar almacenamiento: contenedor hermético en nevera, dura X días.
+- DESAYUNOS: pasos rápidos (5-10 min máx). Huevos revueltos, omelettes, huevos fritos con aguacate, etc.
+- ALMUERZOS y CENAS: escribir los pasos como si se cocinara normalmente (no mencionar "prep domingo" — eso lo maneja la guía de prep aparte). Incluir como ÚLTIMO paso cómo recalentar si fue pre-cocinado: "Para servir: recalentar en microondas 2 min o sartén a fuego medio 3-4 min."
 - INGREDIENTES: cantidades exactas mostrando SIEMPRE ambas unidades: libras y gramos/kg juntos. Ejemplos: "0.5 lb (227g) pollo", "1.1 lb (500g) res", "3.3 lb (1.5 kg) salmón", "30g (1 oz) queso". Siempre especificar "aceite de oliva extra virgen" o "aceite de coco", nunca solo "aceite". Indicar la preparación del ingrediente: "en cubos", "en rodajas finas", "picado", "desmenuzado", etc.
-- DESCRIPCION: 1-2 frases apetitosas. Para almuerzos/cenas mencionar que se prepara el domingo.
+- DESCRIPCION: 1-2 frases apetitosas.
 `.trim();
 
 // ------------------------------------------------------------
@@ -105,6 +105,29 @@ REGLA CLAVE DE PROTEÍNAS:
 - Salsas y aderezos: preparar 3-4 salsas diferentes el domingo (pesto, chimichurri, vinagreta asiática, etc.) y usar cada una en distintas comidas.
 - Priorizar recetas que se mantienen bien en la nevera 4-5 días.
 - Sé creativo con las SALSAS y ACOMPAÑAMIENTOS para que la misma proteína no sepa igual dos días seguidos.`;
+
+// ------------------------------------------------------------
+// GUÍA DE PREP DOMINICAL
+// Instrucciones para generar la guía consolidada de batch cooking
+// ------------------------------------------------------------
+export const PREP_GUIDE_RULES = `
+Eres un chef experto en meal prep y batch cooking. Te doy todas las recetas de la semana (almuerzos y cenas de lunes a sábado). Tu trabajo es crear una GUÍA DE COCINA PARA EL DOMINGO organizada por fases, para cocinar TODO de manera eficiente en unas pocas horas.
+
+REGLAS:
+- Agrupar por proteína: si hay 3 recetas con pollo, cocinar TODO el pollo junto
+- Aprovechar tiempos muertos: mientras algo está en el horno, preparar salsas o cortar vegetales
+- Organizar en FASES lógicas (no receta por receta):
+  1. Mise en place: cortar, marinar, pesar todo
+  2. Horno: meter todo lo que va al horno primero (tarda más)
+  3. Sartén/plancha: mientras el horno trabaja, cocinar en estufa
+  4. Salsas y aderezos: preparar todas las salsas
+  5. Vegetales: cocinar/blanquear/asar los vegetales
+  6. Empaque: distribuir en contenedores, etiquetar qué es para qué día
+- Indicar tiempos estimados por fase
+- Dar instrucciones de almacenamiento (qué va junto, qué va separado, qué se congela)
+- Las ensaladas frescas, aguacate cortado, y cosas que no aguantan se preparan el mismo día — indicar cuáles son
+- Ser MUY específico con temperaturas, tiempos y cantidades
+`.trim();
 
 // ------------------------------------------------------------
 // ROL PARA SWAP (cambiar una receta individual)
