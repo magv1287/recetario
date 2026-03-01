@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     }
 
     const model = getGeminiModel();
-    const prompt = getPrepGuidePrompt(recipeSummaries);
+    const prompt = getPrepGuidePrompt(recipeSummaries, plan.portions || 2);
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
 

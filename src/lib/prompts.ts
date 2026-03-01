@@ -135,13 +135,16 @@ const JSON_FORMAT_PREP_GUIDE = `SOLO JSON:
 
 SOLO JSON, nada más.`;
 
-export function getPrepGuidePrompt(recipeSummaries: string[]): string {
+export function getPrepGuidePrompt(recipeSummaries: string[], portions: number): string {
   return `${PREP_GUIDE_RULES}
+
+PORCIONES: ${portions} personas.
+IMPORTANTE: Las cantidades de ingredientes en las recetas ya son el TOTAL para ${portions} personas. Usa EXACTAMENTE esas cantidades en la guía. NO dividas ni modifiques las cantidades — cópialas tal cual aparecen en cada receta. Cuando agrupes proteínas iguales, SUMA las cantidades de todas las recetas que usen esa proteína.
 
 RECETAS DE LA SEMANA (almuerzos y cenas, lunes a sábado):
 ${recipeSummaries.join("\n\n")}
 
-Crea la guía de prep del domingo organizada por FASES (no por receta). Agrupa las tareas para máxima eficiencia.
+Crea la guía de prep del domingo organizada por FASES (no por receta). Agrupa las tareas para máxima eficiencia. Incluir cantidades exactas en cada instrucción.
 
 ${JSON_FORMAT_PREP_GUIDE}`;
 }
