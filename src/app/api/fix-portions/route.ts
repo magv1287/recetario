@@ -1,12 +1,59 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
-import { getGeminiModel, parseGeminiJson } from "@/lib/gemini";
 import { WeeklyPlan, DAYS_OF_WEEK, MealType, DAY_LABELS } from "@/lib/types";
 
 export const maxDuration = 60;
 
 const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "dinner"];
 const MEAL_LABELS: Record<MealType, string> = { breakfast: "Desayuno", lunch: "Almuerzo", dinner: "Cena" };
+
+const PROTEINS = [
+  "pollo", "chicken", "pechuga", "muslo", "thigh",
+  "res", "beef", "steak", "sirloin", "flank", "rib eye", "chuck", "ground beef",
+  "cerdo", "pork", "chuleta", "costilla", "lomo", "tenderloin", "bacon", "tocino",
+  "salmon", "salmón", "tilapia", "bacalao", "cod", "atún", "tuna", "mahi",
+  "camarones", "shrimp", "vieiras", "scallops",
+  "pavo", "turkey",
+];
+
+function isProteinIngredient(ingredient: string): boolean {
+  const lower = ingredient.toLowerCase();
+  return PROTEINS.some((p) => lower.includes(p));
+}
+
+function doubleQuantities(ingredient: string): string {
+  // Match patterns like "0.5 lb (227g)" or "0.5 lb (227 g)" or "1 lb (454g)"
+  const lbGramPattern = /(\d+\.?\d*)\s*lb\s*\((\d+\.?\d*)\s*g\)/i;
+  const match = ingredient.match(lbGramPattern);
+
+  if (match) {
+    const oldLb = parseFloat(match[1]);
+    const oldG = parseFloat(match[2]);
+    const newLb = (oldLb * 2).toFixed(1).replace(/\.0$/, "");
+    const newG = Math.round(oldG * 2);
+    return ingredient.replace(match[0], `${newLb} lb (${newG}g)`);
+  }
+
+  // Match "X lb" without grams
+  const lbOnly = /(\d+\.?\d*)\s*lb/i;
+  const lbMatch = ingredient.match(lbOnly);
+  if (lbMatch) {
+    const oldLb = parseFloat(lbMatch[1]);
+    const newLb = (oldLb * 2).toFixed(1).replace(/\.0$/, "");
+    return ingredient.replace(lbMatch[0], `${newLb} lb`);
+  }
+
+  // Match "Xg" or "X g"
+  const gOnly = /(\d+\.?\d*)\s*g\b/i;
+  const gMatch = ingredient.match(gOnly);
+  if (gMatch) {
+    const oldG = parseFloat(gMatch[1]);
+    const newG = Math.round(oldG * 2);
+    return ingredient.replace(gMatch[0], `${newG}g`);
+  }
+
+  return ingredient;
+}
 
 export async function POST(req: Request) {
   try {
@@ -22,7 +69,7 @@ export async function POST(req: Request) {
     }
 
     const plan = planSnap.data() as WeeklyPlan;
-    const fixes: { recipeId: string; day: string; meal: string; title: string; oldIngredients: string[]; newIngredients: string[] }[] = [];
+    const fixes: { day: string; meal: string; title: string; changes: string[] }[] = [];
 
     for (const day of DAYS_OF_WEEK) {
       for (const meal of MEAL_TYPES) {
@@ -34,38 +81,36 @@ export async function POST(req: Request) {
 
         const recipe = recipeSnap.data()!;
         const ingredients: string[] = recipe.ingredients || [];
+        const changes: string[] = [];
+        let changed = false;
 
-        const model = getGeminiModel();
-        const prompt = `Revisa estos ingredientes de una receta que debe ser para ${portions} personas.
+        const newIngredients = ingredients.map((ing) => {
+          if (!isProteinIngredient(ing)) return ing;
 
-La regla es: 0.5 lb (227g) de proteína POR PERSONA por comida. Para ${portions} personas = ${(portions * 0.5).toFixed(1)} lb (${Math.round(portions * 227)}g) de proteína total.
+          // Check if it looks like a per-person amount (0.5 lb or ~227g)
+          const lbMatch = ing.match(/(\d+\.?\d*)\s*lb/i);
+          if (lbMatch) {
+            const lb = parseFloat(lbMatch[1]);
+            // If it's 0.5 lb or less, it's likely per-person — double it
+            if (lb <= 0.5) {
+              const fixed = doubleQuantities(ing);
+              if (fixed !== ing) {
+                changes.push(`${ing} → ${fixed}`);
+                changed = true;
+                return fixed;
+              }
+            }
+          }
+          return ing;
+        });
 
-Si la proteína (pollo, res, cerdo, pescado, camarones, pavo, etc.) tiene cantidades para 1 persona (ej: 0.5 lb / 227g), multiplícala por ${portions}.
-Si ya tiene la cantidad correcta para ${portions} personas (ej: ${(portions * 0.5).toFixed(1)} lb / ${Math.round(portions * 227)}g), NO la cambies.
-Para los demás ingredientes (vegetales, salsas, aceite, especias, huevos), ajústalos proporcionalmente si parecen ser para 1 persona.
-
-Ingredientes actuales:
-${ingredients.map((ing, i) => `${i + 1}. ${ing}`).join("\n")}
-
-Devuelve SOLO JSON:
-{ "ingredients": ["ingrediente 1 corregido", "ingrediente 2 corregido", ...] }
-
-Si todo está correcto, devuelve los ingredientes sin cambios. SOLO JSON, nada más.`;
-
-        const result = await model.generateContent(prompt);
-        const data = parseGeminiJson(result.response.text());
-        const newIngredients: string[] = data.ingredients || ingredients;
-
-        const changed = JSON.stringify(newIngredients) !== JSON.stringify(ingredients);
         if (changed) {
           await adminDb.collection("recipes").doc(slot.recipeId).update({ ingredients: newIngredients });
           fixes.push({
-            recipeId: slot.recipeId,
             day: DAY_LABELS[day],
             meal: MEAL_LABELS[meal],
             title: recipe.title,
-            oldIngredients: ingredients,
-            newIngredients,
+            changes,
           });
         }
       }
@@ -74,7 +119,7 @@ Si todo está correcto, devuelve los ingredientes sin cambios. SOLO JSON, nada m
     return NextResponse.json({
       success: true,
       fixedCount: fixes.length,
-      fixes: fixes.map((f) => ({ day: f.day, meal: f.meal, title: f.title })),
+      fixes,
     });
   } catch (error: any) {
     console.error("Error fixing portions:", error?.message || error);
