@@ -299,7 +299,13 @@ export default function CalendarPage() {
       </div>
 
       {showPrepGuide && prepGuide && (
-        <PrepGuideModal guide={prepGuide} onToggle={toggleStep} onClose={() => setShowPrepGuide(false)} />
+        <PrepGuideModal
+          guide={prepGuide}
+          onToggle={toggleStep}
+          onRegenerate={handleGeneratePrepGuide}
+          regenerating={generatingPrep}
+          onClose={() => setShowPrepGuide(false)}
+        />
       )}
     </main>
   );

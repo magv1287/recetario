@@ -1,16 +1,18 @@
 "use client";
 
 import React from "react";
-import { X, Clock, ChefHat, Check } from "lucide-react";
+import { X, Clock, ChefHat, Check, RefreshCw, Loader2 } from "lucide-react";
 import { PrepGuide } from "@/lib/types";
 
 interface PrepGuideModalProps {
   guide: PrepGuide;
   onToggle: (phaseIndex: number, instructionIndex: number) => void;
+  onRegenerate: () => Promise<void>;
+  regenerating: boolean;
   onClose: () => void;
 }
 
-export function PrepGuideModal({ guide, onToggle, onClose }: PrepGuideModalProps) {
+export function PrepGuideModal({ guide, onToggle, onRegenerate, regenerating, onClose }: PrepGuideModalProps) {
   const totalItems = guide.steps.reduce((sum, s) => sum + s.instructions.length, 0);
   const checkedItems = guide.steps.reduce(
     (sum, s) => sum + (s.checked || []).filter(Boolean).length,
@@ -33,12 +35,22 @@ export function PrepGuideModal({ guide, onToggle, onClose }: PrepGuideModalProps
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-[var(--muted)] hover:text-[var(--foreground)] p-2 rounded-xl hover:bg-[var(--card-hover)] transition-colors"
-          >
-            <X size={22} />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={onRegenerate}
+              disabled={regenerating}
+              className="text-[var(--muted)] hover:text-[var(--foreground)] p-2 rounded-xl hover:bg-[var(--card-hover)] transition-colors disabled:opacity-50"
+              title="Regenerar guia"
+            >
+              {regenerating ? <Loader2 className="animate-spin" size={20} /> : <RefreshCw size={20} />}
+            </button>
+            <button
+              onClick={onClose}
+              className="text-[var(--muted)] hover:text-[var(--foreground)] p-2 rounded-xl hover:bg-[var(--card-hover)] transition-colors"
+            >
+              <X size={22} />
+            </button>
+          </div>
         </div>
 
         <div className="px-6 pt-4 pb-0 shrink-0">
