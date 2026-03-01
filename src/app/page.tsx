@@ -189,7 +189,7 @@ export default function CalendarPage() {
 
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-5 pb-28 lg:pb-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-5 pb-6 lg:pb-8">
         <div className="flex flex-col gap-4 mb-6">
           {/* Row 1: Title + Week selector */}
           <div className="flex items-center justify-between">

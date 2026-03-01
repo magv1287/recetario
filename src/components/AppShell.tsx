@@ -51,6 +51,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
       )}
       {children}
+      {showNav && (
+        <div
+          className="lg:hidden"
+          style={{ height: "calc(60px + max(env(safe-area-inset-bottom, 0px), 8px))" }}
+          aria-hidden="true"
+        />
+      )}
       {showNav && <BottomNav />}
       {showAccess && user?.email && (
         <AccessManager userEmail={user.email} onClose={() => setShowAccess(false)} />

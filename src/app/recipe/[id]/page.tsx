@@ -162,7 +162,7 @@ export default function RecipeDetailPage({
   const recipeIsFavorite = isFavorite(recipe.id);
 
   return (
-    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pb-24 lg:pb-16">
+    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pb-6 lg:pb-16">
       {/* Desktop: back button bar */}
       <div className="hidden lg:block border-b border-[var(--border)]">
         <div className="max-w-5xl mx-auto px-8 py-3 flex items-center justify-between">
