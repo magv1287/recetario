@@ -138,6 +138,7 @@ export interface CronStatus {
 export interface PrepGuideStep {
   phase: string;
   instructions: string[];
+  checked: boolean[];
   timing: string;
 }
 

@@ -67,11 +67,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const steps = (data.steps || []).map((step: any) => ({
-      phase: step.phase || "",
-      timing: step.timing || "",
-      instructions: step.instructions || [],
-    }));
+    const steps = (data.steps || []).map((step: any) => {
+      const instructions = step.instructions || [];
+      return {
+        phase: step.phase || "",
+        timing: step.timing || "",
+        instructions,
+        checked: new Array(instructions.length).fill(false),
+      };
+    });
 
     await adminDb.collection("prepGuides").doc(weekId).set({
       userId: plan.userId,

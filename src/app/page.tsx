@@ -29,7 +29,7 @@ export default function CalendarPage() {
   const [userIsAdmin, setUserIsAdmin] = useState(false);
 
   const { plan, recipes, loading: planLoading, toggleLock, clearMeal, copyPlanToWeek } = useWeeklyPlan(user?.uid, weekId);
-  const { prepGuide } = usePrepGuide(user?.uid, weekId);
+  const { prepGuide, toggleStep } = usePrepGuide(user?.uid, weekId);
 
   const [generatingPrep, setGeneratingPrep] = useState(false);
   const [showPrepGuide, setShowPrepGuide] = useState(false);
@@ -299,7 +299,7 @@ export default function CalendarPage() {
       </div>
 
       {showPrepGuide && prepGuide && (
-        <PrepGuideModal guide={prepGuide} onClose={() => setShowPrepGuide(false)} />
+        <PrepGuideModal guide={prepGuide} onToggle={toggleStep} onClose={() => setShowPrepGuide(false)} />
       )}
     </main>
   );

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { doc, onSnapshot } from "firebase/firestore";
+import { useState, useEffect, useCallback } from "react";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { PrepGuide } from "@/lib/types";
 
@@ -36,5 +36,22 @@ export function usePrepGuide(userId: string | undefined, weekId: string) {
     return () => unsubscribe();
   }, [userId, weekId]);
 
-  return { prepGuide, loading };
+  const toggleStep = useCallback(
+    async (phaseIndex: number, instructionIndex: number) => {
+      if (!prepGuide) return;
+
+      const updatedSteps = prepGuide.steps.map((step, i) => {
+        if (i !== phaseIndex) return step;
+        const checked = [...(step.checked || new Array(step.instructions.length).fill(false))];
+        checked[instructionIndex] = !checked[instructionIndex];
+        return { ...step, checked };
+      });
+
+      const docRef = doc(db, "prepGuides", prepGuide.id);
+      await updateDoc(docRef, { steps: updatedSteps });
+    },
+    [prepGuide]
+  );
+
+  return { prepGuide, loading, toggleStep };
 }
