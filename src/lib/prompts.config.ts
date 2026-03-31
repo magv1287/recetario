@@ -9,34 +9,32 @@
 // (plan semanal, swap de recetas individuales)
 // ------------------------------------------------------------
 export const DIET_RULES = `
-DIETA ANTI-INFLAMATORIA (basada en recomendaciones del Dr. Guillermo Navarrete y Dr. Bayter):
-- Proteínas: 0.5 lb (227g) de proteína pesada en crudo POR PERSONA por comida (o 3-4 huevos POR PERSONA). Multiplicar siempre por el número de porciones. Especificar SIEMPRE el corte exacto para encontrarlo en el supermercado:
-  * Pollo: pechuga (chicken breast), muslo (chicken thigh), muslo deshuesado (boneless thigh)
-  * Res: lomo/sirloin (sirloin steak), falda (flank steak), rib eye, ground beef (80/20), chuck roast
-  * Cerdo: lomo (pork tenderloin), chuleta (pork chop), costilla (pork ribs), bacon/tocino
-  * Pescado: salmón (salmon fillet), tilapia, bacalao (cod), atún (tuna steak), mahi-mahi
-  * Mariscos: camarones (shrimp), vieiras (scallops)
-  * Otros: pavo molido (ground turkey)
-- Carbohidratos: máximo 0.02lb netos por comida por persona (multiplicar por número de porciones)
-- ACEITES: SOLO aceite de oliva extra virgen o aceite de coco. PROHIBIDO cualquier aceite vegetal (canola, girasol, soja, maíz, cártamo)
-- MANTEQUILLA: siempre con sal
-- AGUACATE: buena grasa pero con moderación. Máximo 5-6 aguacates por semana para 2 personas. No poner aguacate en TODAS las comidas, alternar con otras grasas saludables.
-- Grasas saludables: aceite de oliva extra virgen, aceite de coco, aguacate, frutos secos, mantequilla con sal, beef tallow, queso, crema
-- VERDURAS: SOLO las de muy bajo índice glucémico (IG) y baja carga glucémica. Objetivo: minimizar respuesta de insulina para favorecer pérdida de peso.
-  * PERMITIDAS (IG bajo, mínimo impacto en insulina): espinaca, kale, rúcula (arugula), bok choy, apio (celery), pepino (cucumber), rábano (radish), champiñones (mushrooms), brócoli, coliflor, espárragos, calabacín (zucchini), lechuga
-  * CON MODERACIÓN (IG medio-bajo, usar cantidades pequeñas): pimiento (bell pepper), berenjena (eggplant), tomate (solo como condimento, no como base), cebolla (solo para sofrito, cantidades pequeñas)
-  * PROHIBIDAS (IG alto, elevan insulina): zanahoria, remolacha/betabel, calabaza/squash, maíz/elote, guisantes/arvejas, papa/batata/yuca, cualquier tubérculo
-- DISPONIBILIDAD: usar ingredientes fáciles de encontrar en supermercados de Massachusetts (Trader Joe's, Stop & Shop, Whole Foods). Priorizar productos de Trader Joe's y Stop & Shop
-- FRUTAS: solo berries altas en antioxidantes y bajas en azúcar. Permitidas en DESAYUNO y ALMUERZO (no en cena). Cantidad moderada: un puñado (~1/4 taza por persona).
-  * Permitidas: arándanos (blueberries), frambuesas (raspberries), fresas (strawberries), moras (blackberries), limón/lima
-  * Uso ideal: topping en desayunos (sobre huevos, omelette, o al lado), en ensaladas del almuerzo, o como snack post-almuerzo
-  * NO frutas en cena (aguacate sí permitido siempre, no cuenta como fruta)
-  * PROHIBIDAS: banano, mango, piña, uvas, sandía, melón, naranja y cualquier fruta alta en azúcar
-- SALSAS Y ADEREZOS: todas las salsas deben ser SIN AZÚCAR. Usar solo salsas caseras o sin azúcar añadida.
-  * PERMITIDAS: chimichurri, pesto (albahaca + aceite de oliva + parmesano + ajo), mostaza Dijon, vinagreta (aceite de oliva + vinagre + hierbas), salsa de soja/tamari (sin azúcar), tahini, mantequilla de ajo, salsa de aguacate/guacamole, aioli (ajo + aceite de oliva), curry con crema de coco, salsa de limón y hierbas, gremolata
-  * PROHIBIDAS: teriyaki (tiene mucha azúcar), ketchup, salsa BBQ, salsa hoisin, salsa de ostras, salsa agridulce, mirin, cualquier salsa comercial con azúcar/jarabe de maíz. Si una receta pide soja, usar tamari o coconut aminos sin azúcar.
-- PROHIBIDO: cordero, chía, queso azul (o similares), queso de cabra, azúcar, miel, agave, harinas, pan, pasta, arroz, papa, batata, yuca, maíz, cereales, avena, legumbres, zanahoria, remolacha, calabaza, guisantes, aceites vegetales/semillas, margarina, alimentos ultraprocesados
-- Priorizar alimentos reales, antiinflamatorios, sin procesados
+Proteínas: 0.5 lb (227g) de proteína pesada en crudo POR PERSONA por comida (o 3-4 huevos POR PERSONA). Multiplicar siempre por el número de porciones. Especificar SIEMPRE el corte exacto para encontrarlo en el supermercado:
+Pollo: pechuga (chicken breast), muslo deshuesado (boneless thigh)
+Res: lomo/sirloin (sirloin steak), falda (flank steak), rib eye, ground beef (80/20), chuck roast
+Cerdo: lomo (pork tenderloin), chuleta (pork chop), costilla (pork ribs), bacon/tocino (uso ocasional)
+Pescado: salmón (salmon fillet) (2-3x por semana), tilapia, bacalao (cod), atún (tuna steak), mahi-mahi
+Mariscos: camarones (shrimp), vieiras (scallops)
+Otros: pavo molido (ground turkey)
+Carbohidratos: máximo 0.02–0.04 lb netos por comida por persona (multiplicar por número de porciones)
+ACEITES: SOLO aceite de oliva extra virgen o aceite de coco. PROHIBIDO cualquier aceite vegetal (canola, girasol, soja, maíz, cártamo)
+MANTEQUILLA: siempre con sal (uso moderado)
+AGUACATE: buena grasa pero con moderación. Máximo 5-6 aguacates por semana para 2 personas. No poner aguacate en TODAS las comidas, alternar con otras grasas saludables.
+Grasas saludables: aceite de oliva extra virgen, aceite de coco, aguacate, frutos secos, mantequilla con sal, beef tallow, queso, crema (rotar fuentes de grasa)
+VERDURAS: priorizar las de bajo índice glucémico (IG) y baja carga glucémica. Objetivo: minimizar respuesta de insulina y aumentar fibra (25–35 g/día)
+PERMITIDAS (base diaria): espinaca, kale, rúcula (arugula), bok choy, apio (celery), pepino (cucumber), rábano (radish), champiñones (mushrooms), brócoli, coliflor, espárragos, calabacín (zucchini), hojas de remolacha, hojas de brocoli
+USO NORMAL: pimiento (bell pepper), berenjena (eggplant), tomate, cebolla
+CON MODERACIÓN: remolacha/betabel, zanahoria, calabaza/squash, tubérculos en pequeñas cantidades
+DISPONIBILIDAD: usar ingredientes fáciles de encontrar en supermercados de Massachusetts (Trader Joe's, Stop & Shop, Whole Foods). Priorizar productos de Trader Joe's y Stop & Shop
+FRUTAS: solo berries altas en antioxidantes y bajas en azúcar. Permitidas en DESAYUNO y ALMUERZO (no en cena). Cantidad moderada: un puñado (~1/4–1/2 taza por persona)
+Permitidas: arándanos (blueberries), frambuesas (raspberries), fresas (strawberries), moras (blackberries), limón/lima
+Uso ideal: topping en desayunos, en ensaladas del almuerzo, o como snack post-almuerzo
+NO frutas en cena (aguacate sí permitido siempre, no cuenta como fruta)
+SALSAS Y ADEREZOS: todas las salsas deben ser SIN AZÚCAR. Usar solo salsas caseras o sin azúcar añadida
+PERMITIDAS: chimichurri, pesto (albahaca + aceite de oliva + parmesano + ajo), mostaza Dijon, vinagreta (aceite de oliva + vinagre + hierbas), tamari (sin azúcar), tahini, mantequilla de ajo, salsa de aguacate/guacamole, aioli (ajo + aceite de oliva), curry con crema de coco, salsa de limón y hierbas, gremolata
+PROHIBIDAS: teriyaki, ketchup, salsa BBQ, salsa hoisin, salsa de ostras, salsa agridulce, mirin, cualquier salsa comercial con azúcar/jarabe de maíz
+PROHIBIDO: ultraprocesados, azúcar, miel, agave, harinas, pan, pasta, arroz, cereales, avena, aceites vegetales/semillas, margarina
+Priorizar alimentos reales, antiinflamatorios, sin procesados
 `.trim();
 
 // ------------------------------------------------------------
