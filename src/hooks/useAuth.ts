@@ -8,6 +8,7 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signOut as firebaseSignOut,
+  deleteUser,
   User,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -62,14 +63,15 @@ export function useAuth() {
 
   const signInWithEmail = async (email: string, password: string) => {
     try {
-      // Check allowlist BEFORE attempting auth
+      // Auth first: Firestore rules only allow reading config/access when request.auth != null.
+      await signInWithEmailAndPassword(auth, email, password);
       const allowed = await isEmailAllowed(email);
       if (!allowed) {
+        await firebaseSignOut(auth);
         throw new Error(
           "Este email no esta autorizado. Contacta al administrador."
         );
       }
-      await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
       if (error.message?.includes("no esta autorizado") || error.message?.includes("not authorized")) {
         throw error;
@@ -80,18 +82,27 @@ export function useAuth() {
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
+    let cred: Awaited<ReturnType<typeof createUserWithEmailAndPassword>> | null =
+      null;
     try {
-      // Check allowlist BEFORE attempting sign-up
+      cred = await createUserWithEmailAndPassword(auth, email, password);
       const allowed = await isEmailAllowed(email);
       if (!allowed) {
+        await deleteUser(cred.user);
         throw new Error(
           "Este email no esta autorizado. Contacta al administrador."
         );
       }
-      await createUserWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
       if (error.message?.includes("no esta autorizado") || error.message?.includes("not authorized")) {
         throw error;
+      }
+      if (cred?.user) {
+        try {
+          await deleteUser(cred.user);
+        } catch {
+          /* ignore */
+        }
       }
       console.error("Error signing up:", error);
       throw error;
