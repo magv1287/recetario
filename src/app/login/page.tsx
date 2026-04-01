@@ -37,8 +37,16 @@ export default function LoginPage() {
     } catch (err: any) {
       const code = err?.code || "";
       const msg = err?.message || "";
-      if (code === "auth/user-not-found" || code === "auth/wrong-password" || code === "auth/invalid-credential") {
-        setError("Email o contrasena incorrectos");
+      if (code === "auth/user-not-found") {
+        setError(
+          "No hay cuenta con este email. Pulsa Registrate abajo, elige una contraseña (min. 6 caracteres) y crea tu cuenta."
+        );
+      } else if (code === "auth/wrong-password" || code === "auth/invalid-credential") {
+        setError(
+          isSignUp
+            ? "Email o contrasena incorrectos"
+            : "Email o contrasena incorrectos. Si es tu primera vez aqui, pulsa Registrate y crea tu cuenta con una contraseña nueva."
+        );
       } else if (code === "auth/email-already-in-use") {
         setError("Este email ya esta registrado");
       } else if (code === "auth/weak-password") {
@@ -135,6 +143,14 @@ export default function LoginPage() {
             <p className="text-[var(--muted-dark)] mt-2 text-sm">
               Planificador de comidas semanal
             </p>
+            <h2 className="text-lg font-semibold text-[var(--foreground)] mt-6">
+              {isSignUp ? "Crear cuenta" : "Iniciar sesion"}
+            </h2>
+            <p className="text-[var(--muted-dark)] mt-1 text-xs px-2">
+              {isSignUp
+                ? "Elige una contrasena nueva (min. 6 caracteres). La guardamos solo para esta app."
+                : "Primera vez? Usa Registrate: la contrasena la eliges tu al crear la cuenta."}
+            </p>
           </div>
 
           <div className="hidden lg:block mb-8">
@@ -143,8 +159,8 @@ export default function LoginPage() {
             </h1>
             <p className="text-[var(--muted-dark)] mt-1.5 text-sm">
               {isSignUp
-                ? "Crea tu cuenta para empezar a planificar"
-                : "Inicia sesion para ver tu planificacion"}
+                ? "Elige una contrasena nueva (min. 6 caracteres). Solo sirve para entrar en Recetario."
+                : "Primera vez? Pulsa Registrate abajo: sin cuenta previa, Iniciar sesion no puede funcionar."}
             </p>
           </div>
 
