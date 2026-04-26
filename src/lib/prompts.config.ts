@@ -6,7 +6,7 @@ pocas compras
 ingredientes reutilizados
 batch cooking eficiente (sábado o domingo)
 mínima fricción entre semana
- 
+
 ============================================================
 PRIORIDAD DE OPTIMIZACIÓN (ORDEN ESTRICTO)
 Minimizar ingredientes distintos
@@ -14,7 +14,7 @@ Maximizar reutilización de ingredientes
 Simplificar meal prep
 Reducir tiempo total de cocina
 Luego variedad de sabores
- 
+
 ============================================================
 ARQUITECTURA OBLIGATORIA (CRÍTICO)
 NO generar 21 recetas independientes
@@ -24,7 +24,7 @@ Máximo 3–5 vegetales base
 Máximo 2–3 salsas base
 Cada comida debe ser una combinación de estos componentes
 La variedad viene de combinaciones, no de ingredientes nuevos
- 
+
 ============================================================
 REGLAS DE DIETA
 
@@ -59,12 +59,10 @@ VERDURAS
 Objetivo: bajo IG + alta fibra (25–35g/día)
 
 VEGETALES BASE (CRÍTICO):
-
 Elegir SOLO 3–5 para toda la semana
 Reutilizarlos en múltiples comidas
 
 BASE IDEAL:
-
 hojas verdes: espinaca, kale, rúcula, bok choy, acelga
 crucíferas: brócoli, coliflor
 versátiles: zucchini, champiñones, espárragos
@@ -79,18 +77,23 @@ batata / boniato (preferido sobre papa), zanahoria, remolacha
 FRUTAS
 
 FRUTAS (CONSUMO DIRECTO):
-
 Solo berries: blueberries, strawberries, raspberries, blackberries
+Uso principal: con yogurt griego o skyr
 Uso: desayuno o almuerzo (no cena)
 Cantidad: 1/4–1/2 taza por persona
 DEBEN aparecer en el plan al menos 3–4 veces
 SI se usan → DEBEN aparecer en la lista de compras
 
-FRUTAS ÁCIDAS (USO CULINARIO):
+YOGUR:
+Incluir yogurt griego o skyr (sin azúcar)
+Usarlo como base para berries en desayunos
+Puede combinarse con frutos secos o semillas
 
+FRUTAS ÁCIDAS (USO CULINARIO):
 Limón y lima NO cuentan como fruta de consumo
 Se usan para salsas, aderezos y marinados
 SIEMPRE incluirlos en la lista de compras si se usan
+
 ============================================================
 SALSAS
 
@@ -111,55 +114,68 @@ Si aparece una sola vez → reemplazarlo
 Reutilizar ajo, limón, aceite de oliva y hierbas
 
 VALIDACIÓN OBLIGATORIA:
-
 Todo ingrediente usado en recetas DEBE aparecer en la lista de compras
 Todo ingrediente en la lista de compras DEBE usarse en al menos una receta
- 
+
+REGLAS ADICIONALES:
+Yogurt griego o skyr debe aparecer si se usan berries
+No generar berries sin una receta clara donde se consuman
+
 ============================================================
 MEAL PREP (CRÍTICO)
 Todo se cocina en una sola sesión (sábado o domingo)
 Máximo 2 métodos de cocción:
 horno
 sartén / plancha
+
 Máximo 2 horas de trabajo activo
 
 Priorizar:
-
 bandejas grandes al horno
 proteínas en lote
 vegetales asados o salteados
 
 Evitar:
-
 recetas complejas
 técnicas múltiples
 procesos largos
- 
+
 ============================================================
 ESTRUCTURA SEMANAL
-Desayunos: frescos (5–10 min)
-Almuerzos y cenas: pre-cocinados
+Desayunos: frescos (5–10 min), calientes por defecto
+Almuerzos y cenas: comidas calientes pre-cocinadas
+
+REGLA DE TEMPERATURA (CRÍTICO):
+Todas las comidas deben ser calientes
+EXCEPCIÓN: yogurt con berries (frío) o alguna comida que caliente se dañe.
+Evitar comidas completamente frías como ensaladas principales
+
 Entre semana: solo recalentar o ensamblar
- 
+
 ============================================================
 INSTRUCCIONES DE RECETA
 4–6 pasos claros
+
 Incluir:
 qué hacer
 cómo
 tiempo
 temperatura
 cuándo está listo
+
 Ingredientes:
 SIEMPRE en lb + g
 Ej: 0.5 lb (227g)
+
 Incluir al final:
 "Para servir: recalentar..."
+
 Indicar:
 qué se cocinó en batch
 qué se guarda separado
 qué se añade fresco
- 
+si se sirve caliente o frío (por defecto caliente, excepto yogurt con berries)
+
 ============================================================
 LISTA DE COMPRAS
 Agrupar por sección
@@ -168,13 +184,12 @@ Mostrar lb + g SIEMPRE
 Máximo 25–30 líneas
 
 REGLAS CRÍTICAS:
-
 NO incluir ingredientes que no se usan
 NO omitir ingredientes usados
 Incluir berries si aparecen en el plan
 Limón/lima solo como ingredientes culinarios
 Usar nombres comunes (Trader Joe’s / Whole Foods)
- 
+
 ============================================================
 GUÍA DE PREP DOMINICAL
 
@@ -186,10 +201,11 @@ Sartén
 Salsas
 Vegetales
 Empaque
+
 Agrupar por proteína
 Optimizar tiempos
 Incluir almacenamiento y conservación
- 
+
 ============================================================
 OBJETIVO FINAL
 
