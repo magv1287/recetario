@@ -42,6 +42,15 @@ Pescado: salmón (2-3x semana), cod, tuna, mahi-mahi
 Mariscos: shrimp, scallops
 Otros: ground turkey
 
+PREFERENCIA NUTRICIONAL (OMEGA-3):
+
+Priorizar proteínas ricas en omega-3:
+salmón (wild caught)
+sardinas
+mariscos
+Incluir pescado al menos 3–4 veces por semana
+Incluir sardinas al menos 2–3 veces por semana
+
 Carbohidratos:
 Máximo 0.02–0.04 lb netos por comida por persona
 
@@ -49,6 +58,11 @@ Grasas:
 Aceite de oliva extra virgen o aceite de coco solamente
 Mantequilla con sal (moderado), beef tallow
 Rotar grasas: aguacate, frutos secos, queso, crema
+
+PROHIBIDO (CRÍTICO - OMEGA-6):
+Aceite de sésamo
+Semillas de sésamo
+Aceites de semillas: canola, girasol, soja, maíz, cártamo
 
 Aguacate:
 Máx 5–6 por semana (para 2 personas)
@@ -87,7 +101,7 @@ SI se usan → DEBEN aparecer en la lista de compras
 YOGUR:
 Incluir yogurt griego o skyr (sin azúcar)
 Usarlo como base para berries en desayunos
-Puede combinarse con frutos secos o semillas
+Puede combinarse con frutos secos o semillas (EXCEPTO sésamo)
 
 FRUTAS ÁCIDAS (USO CULINARIO):
 Limón y lima NO cuentan como fruta de consumo
@@ -106,12 +120,18 @@ mantequilla de ajo, aioli, curry con coco, limón y hierbas
 PROHIBIDO:
 BBQ, ketchup, teriyaki, hoisin, etc.
 
+RESTRICCIÓN ADICIONAL:
+Evitar ingredientes altos en omega-6 como aceite o semillas de sésamo
+
 ============================================================
 REGLAS DE INGREDIENTES (CRÍTICO)
 Máximo 25–30 ingredientes únicos en toda la semana
 Ningún ingrediente puede aparecer solo una vez
 Si aparece una sola vez → reemplazarlo
 Reutilizar ajo, limón, aceite de oliva y hierbas
+
+PROHIBIDO GLOBAL:
+No usar aceite de sésamo ni semillas de sésamo en ninguna receta
 
 VALIDACIÓN OBLIGATORIA:
 Todo ingrediente usado en recetas DEBE aparecer en la lista de compras
@@ -147,8 +167,18 @@ Almuerzos y cenas: comidas calientes pre-cocinadas
 
 REGLA DE TEMPERATURA (CRÍTICO):
 Todas las comidas deben ser calientes
-EXCEPCIÓN: yogurt con berries (frío) o alguna comida que caliente se dañe.
+EXCEPCIÓN: yogurt con berries (frío) o alguna comida que caliente se dañe
 Evitar comidas completamente frías como ensaladas principales
+
+USO DE SARDINAS:
+
+Incluir sardinas en desayunos o cenas ligeras
+Priorizar sardinas en lata (en agua o aceite de oliva)
+Recetas simples y rápidas
+Ejemplos válidos:
+sardinas con huevos
+sardinas con vegetales salteados
+sardinas con aguacate
 
 Entre semana: solo recalentar o ensamblar
 
@@ -175,6 +205,11 @@ qué se cocinó en batch
 qué se guarda separado
 qué se añade fresco
 si se sirve caliente o frío (por defecto caliente, excepto yogurt con berries)
+
+REGLA PARA SARDINAS:
+
+Máximo 4–5 ingredientes principales
+Mantener recetas simples (no elaboradas)
 
 ============================================================
 LISTA DE COMPRAS
