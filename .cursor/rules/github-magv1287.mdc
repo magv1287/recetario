@@ -1,0 +1,11 @@
+---
+description: Pushes y GitHub CLI siempre con magv1287 (nunca mgonzalezvitale)
+alwaysApply: true
+---
+
+# Cuenta de GitHub para este repo
+
+- **Recetario** (`magv1287/recetario`) y **Fitlife** (`magv1287/fitlife`): cualquier `git push`, PR o comando `gh` que autentique contra GitHub debe usar la cuenta **`magv1287`**, no `mgonzalezvitale` ni `mgonzalez.vitale`.
+- Antes de hacer push desde la terminal del agente, ejecutar: `gh auth switch --user magv1287` y luego `git push` (u orden equivalente).
+- Si un push devuelve 403 o "permission denied", asumir cuenta equivocada: cambiar a `magv1287` y reintentar; no pedir al usuario que use la otra cuenta para estos proyectos.
+- El remoto `origin` debe seguir apuntando a repos bajo **`magv1287/`**.
