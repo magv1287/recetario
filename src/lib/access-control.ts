@@ -32,8 +32,9 @@ export async function isEmailAllowed(email: string): Promise<boolean> {
       return true;
     }
 
-    const data = snap.data() as AccessConfig;
-    return data.allowedEmails.map((e) => e.toLowerCase()).includes(email.toLowerCase());
+    const data = snap.data() as Partial<AccessConfig>;
+    const allowed = Array.isArray(data.allowedEmails) ? data.allowedEmails : [];
+    return allowed.map((e) => String(e).toLowerCase()).includes(email.toLowerCase());
   } catch (error) {
     console.error("Error checking access:", error);
     // If we can't check, deny access for safety
@@ -48,7 +49,11 @@ export async function getAccessConfig(): Promise<AccessConfig | null> {
   try {
     const snap = await getDoc(CONFIG_DOC);
     if (!snap.exists()) return null;
-    return snap.data() as AccessConfig;
+    const raw = snap.data() as Partial<AccessConfig>;
+    return {
+      allowedEmails: Array.isArray(raw.allowedEmails) ? raw.allowedEmails : [],
+      adminEmail: typeof raw.adminEmail === "string" ? raw.adminEmail : "",
+    };
   } catch (error) {
     console.error("Error getting access config:", error);
     return null;
@@ -62,7 +67,8 @@ export async function isAdmin(email: string): Promise<boolean> {
   try {
     const snap = await getDoc(CONFIG_DOC);
     if (!snap.exists()) return false;
-    const data = snap.data() as AccessConfig;
+    const data = snap.data() as Partial<AccessConfig>;
+    if (typeof data.adminEmail !== "string" || !data.adminEmail) return false;
     return data.adminEmail.toLowerCase() === email.toLowerCase();
   } catch {
     return false;

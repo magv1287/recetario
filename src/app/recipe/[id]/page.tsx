@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
   doc,
   getDoc,
@@ -14,6 +14,20 @@ import { useAuthContext } from "@/components/AuthProvider";
 import { useFavorites } from "@/hooks/useFavorites";
 import { Recipe, Category, Diet } from "@/lib/types";
 import { getCategoryEmoji, getDietStyle, CATEGORIES, DIETS } from "@/lib/categories";
+
+const VALID_DIETS: Diet[] = ["Keto", "Low Carb", "Carnivora", "Mediterranea"];
+const VALID_CATEGORIES: Category[] = CATEGORIES.map((c) => c.name);
+
+function normalizeDietList(value: unknown): Diet[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((d): d is Diet => typeof d === "string" && VALID_DIETS.includes(d as Diet));
+}
+
+function normalizeCategory(value: unknown): Category {
+  return typeof value === "string" && VALID_CATEGORIES.includes(value as Category)
+    ? (value as Category)
+    : "Otros";
+}
 import { DeleteConfirm } from "@/components/DeleteConfirm";
 import {
   ArrowLeft,
@@ -28,12 +42,15 @@ import {
   ChefHat,
 } from "lucide-react";
 
-export default function RecipeDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+function asStringList(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map((v) => String(v)).filter(Boolean);
+  return [];
+}
+
+export default function RecipeDetailPage() {
+  const params = useParams();
+  const rawId = params?.id;
+  const id = typeof rawId === "string" ? rawId : Array.isArray(rawId) ? rawId[0] ?? "" : "";
   const { user } = useAuthContext();
   const router = useRouter();
   const { toggleFavorite, isFavorite } = useFavorites(user?.uid);
@@ -53,13 +70,39 @@ export default function RecipeDetailPage({
   const [editImageFile, setEditImageFile] = useState<File | null>(null);
   const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
 
+  const initEditForm = useCallback((r: Recipe) => {
+    setEditTitle(r.title ?? "");
+    setEditDescription(r.description || "");
+    setEditCategory(normalizeCategory(r.category));
+    setEditDiets(normalizeDietList(r.diets));
+    setEditIngredients(asStringList(r.ingredients).join("\n"));
+    setEditSteps(asStringList(r.steps).join("\n"));
+    setEditImagePreview(r.imageUrl || null);
+  }, []);
+
   useEffect(() => {
+    if (!id) {
+      setRecipe(null);
+      setLoading(false);
+      return;
+    }
+
     const fetchRecipe = async () => {
       try {
         const docRef = doc(db, "recipes", id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          const data = { id: docSnap.id, ...docSnap.data() } as Recipe;
+          const raw = { id: docSnap.id, ...docSnap.data() } as Record<string, unknown> & { id: string };
+          const data = {
+            ...raw,
+            title: typeof raw.title === "string" ? raw.title : "Sin título",
+            description: typeof raw.description === "string" ? raw.description : "",
+            category: normalizeCategory(raw.category),
+            ingredients: asStringList(raw.ingredients),
+            steps: asStringList(raw.steps),
+            diets: normalizeDietList(raw.diets),
+            imageUrl: typeof raw.imageUrl === "string" ? raw.imageUrl : "",
+          } as Recipe;
           setRecipe(data);
           initEditForm(data);
         }
@@ -70,17 +113,7 @@ export default function RecipeDetailPage({
       }
     };
     fetchRecipe();
-  }, [id]);
-
-  const initEditForm = (r: Recipe) => {
-    setEditTitle(r.title);
-    setEditDescription(r.description || "");
-    setEditCategory(r.category);
-    setEditDiets(r.diets || []);
-    setEditIngredients(r.ingredients?.join("\n") || "");
-    setEditSteps(r.steps?.join("\n") || "");
-    setEditImagePreview(r.imageUrl || null);
-  };
+  }, [id, initEditForm]);
 
   const handleSave = async () => {
     if (!recipe || !user) return;
@@ -410,7 +443,7 @@ export default function RecipeDetailPage({
                   <span className="bg-[var(--accent-soft)] text-[var(--accent)] px-3 py-1 rounded-full text-xs font-semibold">
                     {getCategoryEmoji(recipe.category)} {recipe.category}
                   </span>
-                  {recipe.diets && recipe.diets.length > 0 &&
+                  {Array.isArray(recipe.diets) && recipe.diets.length > 0 &&
                     recipe.diets.map((diet) => (
                       <span
                         key={diet}
@@ -446,10 +479,10 @@ export default function RecipeDetailPage({
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 <div className="bg-[var(--card)] rounded-xl shadow-[var(--shadow-sm)] p-5">
                   <h2 className="text-[var(--accent)] text-xs font-bold uppercase tracking-wider mb-4">
-                    Ingredientes ({recipe.ingredients?.length || 0})
+                    Ingredientes ({asStringList(recipe.ingredients).length})
                   </h2>
                   <ul className="space-y-2.5">
-                    {recipe.ingredients?.map((ing, i) => (
+                    {asStringList(recipe.ingredients).map((ing, i) => (
                       <li key={i} className="flex items-start gap-2.5 text-[var(--muted)] text-sm leading-relaxed">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] mt-2 shrink-0" />
                         {ing}
@@ -463,7 +496,7 @@ export default function RecipeDetailPage({
                     Preparacion
                   </h2>
                   <ol className="space-y-4">
-                    {recipe.steps?.map((step, i) => (
+                    {asStringList(recipe.steps).map((step, i) => (
                       <li key={i} className="flex gap-3">
                         <span className="w-7 h-7 rounded-full bg-[var(--accent-soft)] text-[var(--accent)] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                           {i + 1}

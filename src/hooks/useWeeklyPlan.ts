@@ -78,15 +78,21 @@ export function useWeeklyPlan(userId: string | undefined, weekId: string) {
     const unsubscribe = onSnapshot(
       docRef,
       async (snap) => {
-        if (snap.exists()) {
-          const data = { id: snap.id, ...snap.data() } as WeeklyPlan;
-          setPlan(data);
-          await loadRecipesForPlan(data);
-        } else {
-          setPlan(null);
+        try {
+          if (snap.exists()) {
+            const data = { id: snap.id, ...snap.data() } as WeeklyPlan;
+            setPlan(data);
+            await loadRecipesForPlan(data);
+          } else {
+            setPlan(null);
+            setRecipes({});
+          }
+        } catch (e) {
+          console.error("Weekly plan snapshot handler:", e);
           setRecipes({});
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       },
       (error) => {
         console.error("Error fetching weekly plan:", error);
@@ -99,7 +105,13 @@ export function useWeeklyPlan(userId: string | undefined, weekId: string) {
 
   const loadRecipesForPlan = async (plan: WeeklyPlan) => {
     const recipeIds = new Set<string>();
-    for (const dayMeals of Object.values(plan.meals)) {
+    const meals = plan.meals;
+    if (!meals || typeof meals !== "object") {
+      setRecipes({});
+      return;
+    }
+    for (const dayMeals of Object.values(meals)) {
+      if (!dayMeals || typeof dayMeals !== "object") continue;
       if (dayMeals.breakfast?.recipeId) recipeIds.add(dayMeals.breakfast.recipeId);
       if (dayMeals.lunch?.recipeId) recipeIds.add(dayMeals.lunch.recipeId);
       if (dayMeals.dinner?.recipeId) recipeIds.add(dayMeals.dinner.recipeId);
@@ -111,7 +123,8 @@ export function useWeeklyPlan(userId: string | undefined, weekId: string) {
         try {
           const recipeDoc = await getDoc(doc(db, "recipes", id));
           if (recipeDoc.exists()) {
-            loaded[id] = { id: recipeDoc.id, ...recipeDoc.data() } as Recipe;
+            const data = recipeDoc.data() as Record<string, unknown>;
+            loaded[id] = { ...data, id: recipeDoc.id } as Recipe;
           }
         } catch (err) {
           console.error(`Error loading recipe ${id}:`, err);

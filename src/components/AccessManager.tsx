@@ -55,7 +55,8 @@ export function AccessManager({ userEmail, onClose }: AccessManagerProps) {
 
     const emailToAdd = newEmail.trim().toLowerCase();
 
-    if (config?.allowedEmails.map((e) => e.toLowerCase()).includes(emailToAdd)) {
+    const list = config?.allowedEmails ?? [];
+    if (list.map((e) => e.toLowerCase()).includes(emailToAdd)) {
       setError("Este email ya tiene acceso");
       return;
     }
@@ -77,7 +78,7 @@ export function AccessManager({ userEmail, onClose }: AccessManagerProps) {
   };
 
   const handleRemove = async (email: string) => {
-    if (email.toLowerCase() === config?.adminEmail.toLowerCase()) {
+    if (email.toLowerCase() === (config?.adminEmail ?? "").toLowerCase()) {
       setError("No puedes eliminar al administrador");
       return;
     }
@@ -180,12 +181,12 @@ export function AccessManager({ userEmail, onClose }: AccessManagerProps) {
 
               <div>
                 <label className="text-sm text-[var(--muted)] font-semibold mb-3 block">
-                  Usuarios con acceso ({config?.allowedEmails.length || 0})
+                  Usuarios con acceso ({(config?.allowedEmails ?? []).length})
                 </label>
                 <div className="space-y-2">
-                  {config?.allowedEmails.map((email) => {
+                  {(config?.allowedEmails ?? []).map((email) => {
                     const isAdminEmail =
-                      email.toLowerCase() === config.adminEmail.toLowerCase();
+                      email.toLowerCase() === (config?.adminEmail ?? "").toLowerCase();
                     const isCurrentUser =
                       email.toLowerCase() === userEmail.toLowerCase();
 
