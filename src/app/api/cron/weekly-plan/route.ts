@@ -91,7 +91,7 @@ export async function GET(req: Request) {
     }
 
     const planMeals: Record<string, Record<string, { recipeId: string; locked: boolean }>> = {};
-    const allIngredients: string[] = [];
+    const recipeBlocks: { title: string; ingredients: string[] }[] = [];
 
     for (const day of DAYS_OF_WEEK) {
       planMeals[day] = {};
@@ -120,7 +120,10 @@ export async function GET(req: Request) {
           locked: false,
         };
 
-        allIngredients.push(...(recipeData.ingredients || []));
+        recipeBlocks.push({
+          title: recipeData.title || "Sin titulo",
+          ingredients: recipeData.ingredients || [],
+        });
       }
     }
 
@@ -132,10 +135,10 @@ export async function GET(req: Request) {
       meals: planMeals,
     });
 
-    if (allIngredients.length > 0) {
+    if (recipeBlocks.length > 0) {
       try {
         const listModel = getGeminiModel();
-        const listPrompt = getShoppingListPrompt(allIngredients);
+        const listPrompt = getShoppingListPrompt(recipeBlocks, portions);
         const listResult = await listModel.generateContent(listPrompt);
         const listData = parseGeminiJson(listResult.response.text());
 

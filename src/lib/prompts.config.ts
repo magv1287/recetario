@@ -83,10 +83,12 @@ Limón y lima NO cuentan como fruta de consumo.
 Se usan para salsas, aderezos y marinados.
 Siempre incluirlos en la lista de compras si se usan.
 
-SALSAS:
+SALSAS (siempre caseras en esta app):
 Todas sin azúcar.
+Si el plato o los pasos mencionan pesto, chimichurri, aioli, vinagreta, etc., NO pongas en ingredientes solo "pesto" o "chimichurri" como frasco del súper. Lista cada ingrediente crudo con cantidad (ej. pesto: albahaca fresca, ajo, parmesano rallado, nueces de pino, aceite de oliva extra virgen, limón; chimichurri: perejil fresco, orégano seco, ajo, aceite de oliva extra virgen, vinagre de vino tinto, sal, pimienta, chile en hojuelas opcional).
+En los PASOS incluye cómo preparar la salsa en casa (batidora, mortero o bol) cuando aplique.
 
-Permitidas:
+Permitidas como preparaciones caseras:
 chimichurri, pesto, vinagreta, mostaza Dijon, tamari, tahini,
 mantequilla de ajo, aioli, curry con coco, limón y hierbas.
 
@@ -123,6 +125,9 @@ No repetir exactamente el mismo perfil de sabor dos días seguidos, pero se perm
 
 Incluir aguacate en algunas comidas, pero no en todas.
 Máximo 5-6 aguacates por semana para 2 personas.
+
+SIN DUPLICAR PLATOS:
+Los 21 títulos de receta deben ser todos distintos (comparación sin importar mayúsculas). PROHIBIDO el mismo título exacto dos veces en la semana. Puedes reutilizar la misma proteína en batch, pero el título debe reflejar un plato distinto (salsa, guarnición o estilo diferente).
 `.trim();
 
 export const COOKING_INSTRUCTIONS = `
@@ -147,6 +152,8 @@ cuándo está listo
 Ingredientes:
 Mostrar SIEMPRE lb + g.
 Ejemplo: 0.5 lb (227g).
+
+Toda proteína principal del plato (pollo, res, cerdo, pescado, mariscos, huevos, sardinas) DEBE aparecer explícitamente en la lista de ingredientes con peso/cantidad total para las porciones, aunque el título ya lo nombre. No asumir que "se entiende" sin línea de ingrediente.
 
 Siempre especificar aceite de oliva extra virgen o aceite de coco. Nunca escribir solo aceite.
 
@@ -197,7 +204,13 @@ calabacín / zucchini
 pimiento / bell pepper
 bacon / tocino
 
-Usar nombres comunes y fáciles de encontrar en Trader Joe’s o Whole Foods.
+Usar nombres comunes y fáciles de encontrar en Trader Joe's o Whole Foods.
+
+PROTEÍNAS OBLIGATORIAS:
+Por cada bloque "--- RECETA ..." revisa el TÍTULO. Si habla de pollo, res/carne molida, cerdo, pavo, salmón, bacalao, atún, camarones, huevos, sardinas, etc., esa proteína DEBE salir en la lista final con cantidad total (sumando todas las comidas). Si falta en las líneas de ingredientes pero el título la implica, INFERIR usando el encabezado del prompt (porciones × ~0.5 lb por almuerzo/cena con proteína pesada, salvo que ya haya otra cantidad explícita).
+
+SALSAS CASERAS EN LA COMPRA:
+No consolidar solo en "Pesto" o "Chimichurri" sin más. Desglosar en ingredientes crudos (albahaca, perejil, ajo, parmesano, nueces de pino, vinagre, limón, etc.) y sumar entre recetas. Aumentar aceite de oliva extra virgen si hace falta para pestos/chimichurri/aioli.
 `.trim();
 
 export const AI_ROLE = `
@@ -255,6 +268,10 @@ Usarlas en recetas simples:
 sardinas con huevos
 sardinas con vegetales salteados
 sardinas con aguacate
+
+SALSAS EN BATCH:
+Preparar 2-3 salsas base el día de prep (pesto, chimichurri, vinagreta, etc.).
+Cada receta que use una salsa debe listar en ingredientes los productos crudos para hacerla en casa (nunca solo "pesto" o "chimichurri" genérico).
 
 INGREDIENTES:
 Máximo 25-30 ingredientes únicos en toda la semana.

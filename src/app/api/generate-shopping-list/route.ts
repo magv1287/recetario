@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import { getGeminiModel, parseGeminiJson } from "@/lib/gemini";
-import { getShoppingListPrompt } from "@/lib/prompts";
+import { getShoppingListPrompt, type ShoppingListRecipeBlock } from "@/lib/prompts";
 import { WeeklyPlan, DAYS_OF_WEEK, MealType } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
     const plan = planSnap.data() as WeeklyPlan;
 
-    const allIngredients: string[] = [];
+    const recipeBlocks: ShoppingListRecipeBlock[] = [];
 
     for (const day of DAYS_OF_WEEK) {
       for (const meal of MEAL_TYPES) {
@@ -34,8 +34,10 @@ export async function POST(req: Request) {
         try {
           const recipeSnap = await adminDb.collection("recipes").doc(slot.recipeId).get();
           if (recipeSnap.exists) {
-            const ingredients = recipeSnap.data()!.ingredients || [];
-            allIngredients.push(...ingredients);
+            const data = recipeSnap.data()!;
+            const title = (data.title as string) || "Sin título";
+            const ingredients = Array.isArray(data.ingredients) ? data.ingredients : [];
+            recipeBlocks.push({ title, ingredients });
           }
         } catch {
           // skip individual recipe errors
@@ -43,12 +45,14 @@ export async function POST(req: Request) {
       }
     }
 
-    if (allIngredients.length === 0) {
-      return NextResponse.json({ error: "No se encontraron ingredientes en el plan" }, { status: 400 });
+    if (recipeBlocks.length === 0) {
+      return NextResponse.json({ error: "No se encontraron recetas con ingredientes en el plan" }, { status: 400 });
     }
 
+    const portions = typeof plan.portions === "number" && plan.portions > 0 ? plan.portions : 2;
+
     const model = getGeminiModel();
-    const prompt = getShoppingListPrompt(allIngredients);
+    const prompt = getShoppingListPrompt(recipeBlocks, portions);
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
 

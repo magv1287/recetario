@@ -28,6 +28,8 @@ const JSON_FORMAT_WEEKLY = `Devuelve SOLO JSON válido:
 Categorías: Sopas, Carnes, Pescados, Ensaladas, Desayunos, Cenas, Snacks, Otros
 Dietas: Keto, Low Carb, Carnivora, Mediterranea
 
+TÍTULOS ÚNICOS: los 21 campos "title" (todos los desayunos, almuerzos y cenas) deben ser 21 textos distintos. Comparación sin importar mayúsculas: ningún título puede repetirse. Si dos comidas usan la misma base en batch, los títulos deben diferir (ej. distinto corte, salsa, guarnición o estilo de plato).
+
 SOLO JSON, nada más.`;
 
 const JSON_FORMAT_SWAP = `SOLO JSON:
@@ -71,6 +73,8 @@ ${DIET_RULES}
 PORCIONES: ${portions} personas.
 IMPORTANTE: Todas las cantidades de ingredientes deben ser el TOTAL para ${portions} personas. La proteína debe ser ${portions} x 0.5 lb = ${(portions * 0.5).toFixed(1)} lb (${Math.round(portions * 227)}g) por comida en TOTAL. NO poner cantidades para 1 persona.
 
+REGLA ANTI-DUPLICADOS (obligatoria): revisa el JSON antes de responder. Ningún "title" puede repetirse en toda la semana (21 títulos únicos). Si ya generaste un título, el siguiente plato similar debe llevar otro nombre completo.
+
 ${COOKING_INSTRUCTIONS}${excludeClause}
 
 ${JSON_FORMAT_WEEKLY}`;
@@ -103,10 +107,24 @@ ${COOKING_INSTRUCTIONS}
 ${JSON_FORMAT_SWAP}`;
 }
 
-export function getShoppingListPrompt(allIngredients: string[]): string {
-  return `Consolida estos ingredientes en una lista de compras organizada:
+export type ShoppingListRecipeBlock = { title: string; ingredients: string[] };
 
-${allIngredients.join("\n")}
+export function getShoppingListPrompt(recipes: ShoppingListRecipeBlock[], portions: number): string {
+  const proteinPerMealLb = (portions * 0.5).toFixed(1);
+  const proteinPerMealG = Math.round(portions * 227);
+  const blocks = recipes
+    .map((r, i) => {
+      const lines = r.ingredients.length > 0 ? r.ingredients.join("\n") : "(sin líneas de ingredientes guardadas — usa el título y la regla de porciones)";
+      return `--- RECETA ${i + 1}: ${r.title} ---\n${lines}`;
+    })
+    .join("\n\n");
+
+  return `Consolida en UNA lista de compras los ingredientes de TODAS las recetas del plan (cada bloque es una comida con su título e ingredientes tal como están en la app).
+
+PORCIONES DEL PLAN: ${portions} personas.
+Referencia para inferir proteínas faltantes en almuerzos/cenas: ~${proteinPerMealLb} lb (${proteinPerMealG}g) de proteína principal en TOTAL por comida con carne/pescado/mariscos, salvo que las líneas indiquen otra cantidad.
+
+${blocks}
 
 REGLAS:
 ${SHOPPING_LIST_RULES}
